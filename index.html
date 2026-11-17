@@ -627,6 +627,7 @@ async function initDb(){
   try { uid = user ? await user.id() : null; } catch (e) {}
   if (!db || !uid) { loadLocal(); setStatus("local", "Saved in this browser"); backfillTracker(); afterLoad(); return; }
   col = db.collection("data/users/" + uid);
+  watchInbox(db);
   const timer = setTimeout(() => setStatus("local", "Can't reach your saved work yet; showing the default bank"), 10000);
   try {
     const [b, a, r, m, ls, lt, tk, ro, pr] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile"].map(k => col.doc(k).get()));
