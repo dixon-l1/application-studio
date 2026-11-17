@@ -1,4 +1,4 @@
-# Application Studio: notes for Claude
+# Atria Application Studio: notes for Claude
 
 ## What this is
 A single-page app (`index.html`, plain HTML/CSS/JS, no build step) that tailors resumes, cover letters and application answers to each job from one bank of accomplishment bullets. It's a public portfolio project. The owner is a product manager who shows it to recruiters.
@@ -27,7 +27,7 @@ The repo is public. Never commit a real person's resume content, phone, email, a
 - **Onboarding overlay** (`#ob`), four steps:
   1. Pick fields.
   2. Upload resume, bullet bank and writing samples.
-  3. Stick-figure house-building animation while three Claude calls run: parse the resume, build the bank, and learn the writing style.
+  3. Line-art animation of two Romans carrying benches, statues, vases and plants into an atrium while three Claude calls run: parse the resume, build the bank, and learn the writing style.
   4. The app opens.
 - **Profile and data modal** (`#pf`): edit education, sections and fields; backup, restore, start over.
 - **Bullet rules everywhere:** never invent numbers, put a missing number in a `[bracket placeholder]` with a fallback version of the bullet, no em dashes, one skill per bullet.
