@@ -628,8 +628,10 @@ async function initDb(){
   const timer = setTimeout(() => setStatus("local", "Can't reach your saved work yet; showing the default bank"), 10000);
   try {
     const [b, a, r, m, ls, lt, tk, ro, pr] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile"].map(k => col.doc(k).get()));
-    if (!pr.exists) { clearTimeout(timer); loadLocal(); setStatus("ok", "Ready"); backfillTracker(); afterLoad(); return; }
-    applyProfileDoc(pr.data().data);
+    // A missing profile doc used to return here, which stranded a user's bank, roles and
+    // tracker in their account and showed them an empty app. Load whatever is there.
+    if (pr.exists) applyProfileDoc(pr.data().data);
+    else loadLocal();
     if (ro.exists && Array.isArray(ro.data().data) && ro.data().data.length) ROLES = ro.data().data;
     if (tk.exists && Array.isArray(tk.data().data)) { tracker = tk.data().data; trackerFound = true; }
     if (ls.exists && ls.data().data) letterStyle = Object.assign({samples:[], guide:""}, ls.data().data);
@@ -639,9 +641,12 @@ async function initDb(){
     if (b.exists && Array.isArray(b.data().data)) { bank = b.data().data; mergeDefaults(); }
     if (a.exists && Array.isArray(a.data().data)) questions = a.data().data;
     if (r.exists && Array.isArray(r.data().data)) resumes = r.data().data;
+    if (!pr.exists && (ROLES.length || bank.length)) SETTINGS.onboarded = true;
     setStatus("ok", "Saved to your account");
   } catch (e) {
-    clearTimeout(timer); col = null; loadLocal(); setStatus("local", "Saved in this browser");
+    // Keep col: a transient read failure should not stop later saves from reaching the
+    // account. If a write really fails, persist() downgrades to this browser then.
+    clearTimeout(timer); loadLocal(); setStatus("local", "Showing this browser's copy; still trying your account");
   }
   backfillTracker();
   afterLoad();
