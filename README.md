@@ -1,15 +1,15 @@
-# Application Studio
+# Atria Application Studio
 
 Tailor a resume, cover letter and application answers to every job from one bank of your best accomplishments.
 
-Job seekers rewrite the same resume dozens of times, and the bullets usually get weaker each time. Application Studio flips that: you build one bank of strong, verified bullets once, and every application pulls the best ones for that job. The AI picks and lightly rewords, but it never invents a fact or a number.
+Job seekers rewrite the same resume dozens of times, and the bullets usually get weaker each time. Atria Application Studio flips that: you build one bank of strong, verified bullets once, and every application pulls the best ones for that job. The AI picks and lightly rewords, but it never invents a fact or a number.
 
 ![Onboarding: pick the roles you're applying to](docs/onboarding.png)
 
 ## How it works
 
 1. **Onboarding.** Pick the roles you're applying to (Product Management, Software Engineering, Business Operations). Upload your resume and a list of accomplishments, plus optional writing samples.
-2. **Claude builds your studio** while two stick figures build a house. It parses your resume, rewrites your accomplishments into strong bullets in the style of each field, tags each bullet with the one skill it proves, and learns your writing voice from your samples.
+2. **Claude builds your studio** while two Romans carry benches, statues, vases and plants into an atrium. It parses your resume, rewrites your accomplishments into strong bullets in the style of each field, tags each bullet with the one skill it proves, and learns your writing voice from your samples.
 3. **Apply.** Paste a job description and get a one-page resume, a cover letter and application answers tailored to it.
 
 ![Building your studio](docs/building.png)
