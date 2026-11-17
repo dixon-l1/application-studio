@@ -168,7 +168,6 @@ button.chip{cursor:pointer}
 .job .n{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:6px}
 .job .top3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px}
 @media (max-width:760px){.job .top3{grid-template-columns:1fr}}
-.inbox{border:1px dashed var(--line);border-radius:10px;padding:12px;background:var(--panel)}
 .letter{width:816px;min-height:1056px;margin:0 auto;background:var(--paper);color:var(--paper-ink);box-shadow:var(--shadow);padding:30px 72px 48px;font-family:var(--serif);font-size:15px;line-height:1.4}
 .letter .nm{text-align:center;font-size:32px;font-weight:700;font-variant:small-caps;line-height:1.1}
 .letter .ct{text-align:center;font-size:14px;margin-top:2px;padding-bottom:10px;border-bottom:1.1px solid #111}
@@ -348,7 +347,6 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
       </div>
       <div id="k-msg" class="note" hidden></div>
     </div>
-    <div class="inbox stack" id="k-inbox"></div>
     <div class="jobs" id="k-jobs"></div>
   </div>
 </section>
@@ -627,7 +625,6 @@ async function initDb(){
   try { uid = user ? await user.id() : null; } catch (e) {}
   if (!db || !uid) { loadLocal(); setStatus("local", "Saved in this browser"); backfillTracker(); afterLoad(); return; }
   col = db.collection("data/users/" + uid);
-  watchInbox(db, uid);
   const timer = setTimeout(() => setStatus("local", "Can't reach your saved work yet; showing the default bank"), 10000);
   try {
     const [b, a, r, m, ls, lt, tk, ro, pr] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile"].map(k => col.doc(k).get()));
@@ -1212,7 +1209,7 @@ function buildPDF(w){ const J = window.jspdf.jsPDF; const d = new J({unit:"pt", 
 const pdfName = w => PROFILE.name + " Resume" + (w.company ? " - " + w.company.replace(/[\\\/:*?"<>|]/g, "") : "") + (w.title ? " - " + w.title.replace(/[\\\/:*?"<>|]/g, "").slice(0, 60) : "") + ".pdf";
 const newJob = () => ({id:"j" + Date.now() + Math.random().toString(36).slice(2, 6), link:"", company:"", title:"", jd:"", status:"idle", err:"", resumeId:null, letterId:null});
 let bulk = (() => { try { const b = JSON.parse(localStorage.getItem("as1.bulk") || "null"); if (Array.isArray(b) && b.length) return b.map(j => j.status === "working" ? Object.assign(j, {status:"idle"}) : j); } catch (e) {} return [newJob(), newJob(), newJob(), newJob(), newJob()]; })();
-let bulkLetters = false, bulkAllowGaps = false, bulkRunning = false, bulkAbort = null, inboxItems = [], inboxCol = null;
+let bulkLetters = false, bulkAllowGaps = false, bulkRunning = false, bulkAbort = null;
 function saveBulk(){ try { localStorage.setItem("as1.bulk", JSON.stringify(bulk)); } catch (e) {} }
 const ST = {idle:"Not started", queued:"Queued", working:"Creating…", done:"Resume ready", error:"Needs attention"};
 function renderBulk(){
@@ -1220,12 +1217,6 @@ function renderBulk(){
   $("k-zip").hidden = !(done.length && downloads && window.JSZip);
   $("k-run").disabled = bulkRunning; $("k-stop").hidden = !bulkRunning; $("k-add").disabled = bulkRunning;
   $("k-gaps").checked = bulkAllowGaps; $("k-letters").checked = bulkLetters; $("k-letters").disabled = !sample; $("k-letters").parentElement.title = sample ? "" : "Cover letters need Claude";
-  // inbox
-  let ih = '<div class="row" style="justify-content:space-between"><div><div class="h">Jobs from chat</div><div class="small muted" style="margin-top:4px;max-width:720px">This page can\'t open job links by itself. Paste links to Claude in chat and ask it to add them to Application Studio. Claude reads each posting and sends the description here.</div></div>';
-  if (!inboxCol) ih += '<span class="small muted">Available when you\'re signed in to Claude.</span></div>';
-  else if (!inboxItems.length) ih += '<span class="small muted">Nothing waiting.</span></div>';
-  else ih += '<button class="btn primary" data-act="import">Add ' + inboxItems.length + ' job' + (inboxItems.length > 1 ? "s" : "") + ' to the list</button></div><div class="row">' + inboxItems.map(x => '<span class="chip">' + esc((x.company || "Company?") + (x.title ? " · " + x.title : "")) + '</span>').join("") + "</div>";
-  $("k-inbox").hidden = true;
   $("k-jobs").innerHTML = bulk.map((j, i) => {
     const r = j.resumeId ? resumes.find(x => x.id === j.resumeId) : null;
     const dis = bulkRunning ? " disabled" : "";
@@ -1320,26 +1311,6 @@ $("k-zip").addEventListener("click", async e => {
   } catch (err) { if (err && err.code !== "declined") showMsg("k-msg", "The zip couldn't be saved. Try downloading PDFs one at a time.", true); }
   finally { btn.disabled = false; btn.textContent = "Download all PDFs (.zip)"; }
 });
-$("k-inbox").addEventListener("click", async e => {
-  const b = e.target.closest("[data-act=import]"); if (!b || !inboxItems.length) return;
-  b.disabled = true;
-  const items = inboxItems.slice();
-  for (const x of items) {
-    let slot = bulk.find(j => !j.jd.trim() && !j.link && j.status !== "done");
-    if (!slot) { slot = newJob(); bulk.push(slot); }
-    Object.assign(slot, {link:String(x.link || ""), company:String(x.company || ""), title:String(x.title || ""), jd:String(x.jd || ""), status:"idle", err:""});
-  }
-  saveBulk(); renderBulk();
-  for (const x of items) { try { await inboxCol.doc(x._id).delete(); } catch (err) {} }
-});
-function watchInbox(db, uid){
-  try {
-    // Per viewer: only the data/users/<uid>/ prefix is private to that viewer.
-    // A top-level "inbox" collection would be shared with everyone who can open this page.
-    inboxCol = db.collection("data/users/" + uid + "/inbox/items");
-    inboxCol.onSnapshot(snap => { inboxItems = snap.docs.map(d => Object.assign({_id:d.id}, d.data())).filter(x => x.jd); renderBulk(); }, () => { inboxCol = null; renderBulk(); });
-  } catch (e) { inboxCol = null; }
-}
 
 /* ---------------- Cover letters ---------------- */
 let letterStyle = {samples:[], guide:""};
