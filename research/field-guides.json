@@ -1,0 +1,2170 @@
+{
+  "fields": {
+    "pm": {
+      "label": "Product Management",
+      "short_label": "PM",
+      "headline": "Reviewers scan first for the product outcome you moved, the decision you personally made to move it, and the scope behind it (users, revenue, teams).",
+      "summary_formula": "[Product manager] with [N years] in [domain or product type] who [signature outcome pattern, e.g. takes products from 0 to 1 or grows self-serve revenue]; [one proof point with a number or placeholder]. Keep one positioning; no adjectives like passionate or results-driven.",
+      "bullet_formulas": [
+        {
+          "name": "Outcome by Decision (XYZ)",
+          "template": "[Moved metric] from [baseline] to [result] in [timeframe] by [decision you made] and [how it was executed].",
+          "when": "Default for any bullet where a metric moved; makes the PM's own call separable from the team's build."
+        },
+        {
+          "name": "Launch and Traction",
+          "template": "Launched [product or feature] for [audience or segment], reaching [adoption or revenue] within [timeframe] by [scoping or sequencing decision].",
+          "when": "0-to-1 work or major launches where adoption or revenue after launch is the proof."
+        },
+        {
+          "name": "Insight to Bet",
+          "template": "[Discovery method and volume] revealed [insight], leading to [decision or reframed roadmap], which [result].",
+          "when": "Discovery, research or data-insight stories; the insight must change what was built."
+        },
+        {
+          "name": "Cut and Redirect",
+          "template": "[Cut, killed or deprioritized] [work] after [evidence], redirecting [capacity] to [new priority], which [result].",
+          "when": "Prioritization and judgment stories, including killed projects and roadmap trade-offs."
+        }
+      ],
+      "skills": [
+        {
+          "name": "0-to-1 Product Launch",
+          "definition": "Taking a new product or feature from idea to market and proving it found real usage.",
+          "metrics": [
+            "accounts or users reached in first 30 to 90 days",
+            "activation rate of the launch cohort",
+            "revenue or ARR from the new product",
+            "concept-to-launch time",
+            "share of target segment adopting"
+          ],
+          "keywords": [
+            "0 to 1",
+            "zero to one",
+            "new product",
+            "product launch",
+            "launch strategy",
+            "mvp",
+            "product-market fit",
+            "greenfield",
+            "beta",
+            "general availability",
+            "early adopters",
+            "new product introduction"
+          ],
+          "verbs": [
+            "Launched",
+            "Shipped",
+            "Introduced",
+            "Piloted",
+            "Built",
+            "Pioneered"
+          ],
+          "example": "Launched self-serve invoicing for SMB customers 10 weeks after kickoff, reaching 1,800 paying accounts and $410K ARR in two quarters by scoping the MVP to the 3 highest-volume workflows."
+        },
+        {
+          "name": "Growth and Adoption",
+          "definition": "Increasing the number of users who discover, activate and keep using a product or feature.",
+          "metrics": [
+            "activation rate",
+            "feature adoption % of eligible users",
+            "signup-to-activation conversion",
+            "WAU or MAU growth",
+            "time to first value"
+          ],
+          "keywords": [
+            "growth",
+            "adoption",
+            "activation",
+            "onboarding",
+            "funnel",
+            "acquisition",
+            "conversion rate",
+            "product-led growth",
+            "plg",
+            "self-serve",
+            "time to value",
+            "top of funnel"
+          ],
+          "verbs": [
+            "Grew",
+            "Increased",
+            "Accelerated",
+            "Drove",
+            "Unlocked",
+            "Lifted",
+            "Expanded"
+          ],
+          "example": "Raised new-user activation from 31% to 44% in one quarter by replacing a 9-step setup wizard with a guided first project, adding about 2,600 activated accounts per month."
+        },
+        {
+          "name": "Monetization and Pricing",
+          "definition": "Turning product value into revenue through pricing, packaging, upsell and conversion decisions.",
+          "metrics": [
+            "ARR or revenue added",
+            "free-to-paid conversion",
+            "ARPU or ACV",
+            "expansion revenue",
+            "attach rate of paid add-ons"
+          ],
+          "keywords": [
+            "monetization",
+            "pricing",
+            "packaging",
+            "upsell",
+            "free-to-paid",
+            "paywall",
+            "subscription",
+            "billing",
+            "freemium",
+            "willingness to pay",
+            "average revenue per user",
+            "usage-based pricing",
+            "annual recurring revenue"
+          ],
+          "verbs": [
+            "Monetized",
+            "Repackaged",
+            "Priced",
+            "Introduced",
+            "Captured",
+            "Grew"
+          ],
+          "example": "Repackaged 3 plans into usage-based tiers after 22 willingness-to-pay interviews, raising free-to-paid conversion from 3.1% to 4.0% and ARPU 12% with flat churn over 2 quarters."
+        },
+        {
+          "name": "Retention and Engagement",
+          "definition": "Keeping users returning and customers renewing by fixing the moments where they drop off.",
+          "metrics": [
+            "logo or revenue churn",
+            "net revenue retention",
+            "D30 or D90 cohort retention",
+            "DAU/MAU stickiness",
+            "renewal rate"
+          ],
+          "keywords": [
+            "retention",
+            "churn",
+            "engagement",
+            "net revenue retention",
+            "renewal",
+            "stickiness",
+            "lifecycle",
+            "cohort",
+            "re-engagement",
+            "customer health",
+            "habit formation"
+          ],
+          "verbs": [
+            "Reduced",
+            "Retained",
+            "Improved",
+            "Re-engaged",
+            "Lowered",
+            "Strengthened"
+          ],
+          "example": "Cut monthly logo churn from 2.8% to 2.1% for mid-market accounts by prioritizing bulk edit and usage alerts, the top 2 drivers found in a cancellation analysis of 340 accounts."
+        },
+        {
+          "name": "User Research and Discovery",
+          "definition": "Finding the right problem to solve through interviews, prototypes and evidence before committing engineering time.",
+          "metrics": [
+            "interviews or field sessions tied to a decision",
+            "prototype or concept tests run",
+            "ideas validated vs invalidated",
+            "engineering time saved by killing weak ideas",
+            "post-launch adoption vs forecast"
+          ],
+          "keywords": [
+            "user research",
+            "customer discovery",
+            "product discovery",
+            "customer interviews",
+            "jobs to be done",
+            "usability testing",
+            "prototype",
+            "problem validation",
+            "customer insights",
+            "voice of the customer",
+            "continuous discovery",
+            "personas"
+          ],
+          "verbs": [
+            "Uncovered",
+            "Validated",
+            "Invalidated",
+            "Prototyped",
+            "Identified",
+            "Reframed",
+            "Interviewed"
+          ],
+          "example": "Interviewed 28 warehouse managers and tested 3 clickable prototypes, reframing the roadmap from reporting to exception alerts; the alerts beta reached 63% weekly use among pilot accounts."
+        },
+        {
+          "name": "Experimentation",
+          "definition": "Using controlled tests to decide what ships, and acting on the results, including negative ones.",
+          "metrics": [
+            "lift on the primary metric",
+            "experiments run per quarter",
+            "win rate across tests",
+            "revenue or conversion impact of winners",
+            "time to decision"
+          ],
+          "keywords": [
+            "a/b test",
+            "a/b testing",
+            "experimentation",
+            "experiment",
+            "hypothesis",
+            "split test",
+            "multivariate",
+            "statistical significance",
+            "feature flag",
+            "holdout",
+            "test and learn",
+            "conversion optimization"
+          ],
+          "verbs": [
+            "Tested",
+            "Ran",
+            "Validated",
+            "Disproved",
+            "Iterated",
+            "Optimized"
+          ],
+          "example": "Ran 14 checkout A/B tests over 2 quarters with design and data science, shipping 5 winners that raised mobile conversion from 2.3% to 2.9%, about $1.2M in annualized GMV."
+        },
+        {
+          "name": "Prioritization and Roadmap",
+          "definition": "Deciding what the team builds and what it does not, and sequencing work toward a strategy.",
+          "metrics": [
+            "share of capacity moved to top bets",
+            "items cut or deferred with rationale",
+            "business result of prioritized bets",
+            "time to market for the top priority",
+            "OKR attainment"
+          ],
+          "keywords": [
+            "prioritization",
+            "roadmap",
+            "product strategy",
+            "product vision",
+            "trade-offs",
+            "tradeoffs",
+            "sequencing",
+            "backlog",
+            "product requirements",
+            "prd",
+            "strategic bets",
+            "opportunity sizing"
+          ],
+          "verbs": [
+            "Prioritized",
+            "Sequenced",
+            "Deprioritized",
+            "Cut",
+            "Refocused",
+            "Defined",
+            "Set"
+          ],
+          "example": "Cut 6 of 15 committed roadmap items after sizing each against renewal risk, shifting 40% of team capacity to SSO and audit logs, which unblocked $2.3M in stalled enterprise renewals."
+        },
+        {
+          "name": "Product Analytics",
+          "definition": "Defining the metrics that matter and turning product data into a product decision.",
+          "metrics": [
+            "north star metric defined and adopted",
+            "funnel drop-off quantified",
+            "decision changed by the analysis",
+            "lift from the resulting change",
+            "instrumentation coverage of key flows"
+          ],
+          "keywords": [
+            "product analytics",
+            "north star",
+            "product metrics",
+            "success metrics",
+            "behavioral data",
+            "funnel analysis",
+            "event tracking",
+            "sql",
+            "amplitude",
+            "mixpanel",
+            "instrumentation",
+            "data-driven",
+            "metrics definition"
+          ],
+          "verbs": [
+            "Defined",
+            "Instrumented",
+            "Analyzed",
+            "Diagnosed",
+            "Quantified",
+            "Identified"
+          ],
+          "example": "Defined a weekly-active-projects north star and instrumented 40 events, finding 58% of trials never invited a teammate; the invite-first flow built in response lifted trial conversion 19%."
+        },
+        {
+          "name": "Cross-Functional Leadership",
+          "definition": "Aligning engineering, design, sales, legal and support around one plan without formal authority.",
+          "metrics": [
+            "functions or teams aligned",
+            "launch date hit vs plan",
+            "revenue or accounts protected",
+            "dependencies resolved",
+            "executive sponsors engaged"
+          ],
+          "keywords": [
+            "cross-functional",
+            "stakeholder management",
+            "alignment",
+            "influence without authority",
+            "engineering and design",
+            "executive stakeholders",
+            "launch plan",
+            "dependencies",
+            "go-to-market teams",
+            "sales and marketing"
+          ],
+          "verbs": [
+            "Aligned",
+            "Led",
+            "Orchestrated",
+            "Rallied",
+            "Unblocked",
+            "Negotiated",
+            "Partnered"
+          ],
+          "example": "Aligned 5 teams across engineering, legal, sales and support on a phased EU data-residency launch, shipping on the committed date and retaining 11 enterprise accounts worth $3.4M ARR."
+        },
+        {
+          "name": "Platform and API Products",
+          "definition": "Framing technical or internal products by the value they unlock for developers, partners or other teams.",
+          "metrics": [
+            "developers or internal teams onboarded",
+            "live integrations or API calls",
+            "integration setup time",
+            "time saved for consuming teams",
+            "partner-sourced revenue"
+          ],
+          "keywords": [
+            "platform product",
+            "apis",
+            "api platform",
+            "public api",
+            "developer experience",
+            "sdk",
+            "integrations",
+            "partner ecosystem",
+            "internal tools",
+            "technical product",
+            "developer platform",
+            "marketplace"
+          ],
+          "verbs": [
+            "Productized",
+            "Built",
+            "Opened",
+            "Standardized",
+            "Enabled",
+            "Scaled"
+          ],
+          "example": "Productized an internal payments service into a public API with 3 partner pilots, cutting partner integration time from 6 weeks to 5 days and reaching 140 live integrations within a year."
+        },
+        {
+          "name": "AI Product Development",
+          "definition": "Shipping AI or LLM features that solve a real user problem with measured quality, cost and trust.",
+          "metrics": [
+            "task resolution or deflection rate",
+            "eval pass rate or accuracy",
+            "adoption of the AI feature",
+            "cost per task or request",
+            "error, hallucination or escalation rate",
+            "time saved per user"
+          ],
+          "keywords": [
+            "generative ai",
+            "llm",
+            "large language model",
+            "ai features",
+            "ai-powered",
+            "machine learning",
+            "evals",
+            "model evaluation",
+            "prompt engineering",
+            "copilot",
+            "ai agent",
+            "agentic",
+            "retrieval-augmented"
+          ],
+          "verbs": [
+            "Launched",
+            "Shipped",
+            "Evaluated",
+            "Designed",
+            "Defined",
+            "Scaled"
+          ],
+          "example": "Launched an LLM support assistant gated by a 400-case eval set, resolving 34% of tier-1 tickets without escalation and cutting median first response from 4 hours to 2 minutes."
+        },
+        {
+          "name": "Product Quality and UX",
+          "definition": "Improving how usable, fast and dependable the product feels, measured by customer experience outcomes.",
+          "metrics": [
+            "task success rate",
+            "onboarding or setup time",
+            "support ticket volume",
+            "error rate in a key flow",
+            "CSAT or NPS change (secondary)"
+          ],
+          "keywords": [
+            "user experience",
+            "usability",
+            "customer experience",
+            "customer satisfaction",
+            "csat",
+            "nps",
+            "onboarding",
+            "support tickets",
+            "friction",
+            "accessibility",
+            "design quality",
+            "customer pain points"
+          ],
+          "verbs": [
+            "Simplified",
+            "Streamlined",
+            "Redesigned",
+            "Reduced",
+            "Eliminated",
+            "Improved"
+          ],
+          "example": "Redesigned bulk upload after mapping the top 5 error paths with design, cutting median onboarding from 9 days to 3 and import-related support tickets 46% in one quarter."
+        }
+      ],
+      "metrics": [
+        {
+          "area": "Adoption and activation",
+          "examples": [
+            "activation rate from X% to Y%",
+            "feature adoption as % of eligible users",
+            "WAU/MAU or DAU/MAU",
+            "time to first value",
+            "users or accounts reached"
+          ]
+        },
+        {
+          "area": "Revenue and monetization",
+          "examples": [
+            "ARR or revenue added",
+            "free-to-paid conversion",
+            "ARPU or ACV",
+            "expansion revenue",
+            "pipeline influenced (secondary, state attribution)"
+          ]
+        },
+        {
+          "area": "Retention",
+          "examples": [
+            "logo and revenue churn",
+            "net revenue retention",
+            "D30/D90 cohort retention",
+            "renewal rate"
+          ]
+        },
+        {
+          "area": "Experimentation and discovery",
+          "examples": [
+            "lift on primary metric with test length",
+            "win rate across tests",
+            "interviews or prototype tests tied to a decision",
+            "ideas killed before build and engineering time saved"
+          ]
+        },
+        {
+          "area": "Customer experience",
+          "examples": [
+            "task success rate",
+            "onboarding or setup time",
+            "support tickets deflected",
+            "CSAT/NPS (secondary, weak attribution)"
+          ]
+        },
+        {
+          "area": "AI product quality",
+          "examples": [
+            "eval pass rate",
+            "resolution or deflection rate",
+            "cost per task",
+            "escalation or error rate"
+          ]
+        },
+        {
+          "area": "Scope (context, not outcome)",
+          "examples": [
+            "users, markets or revenue owned",
+            "teams or functions aligned",
+            "engineers and designers on the team"
+          ]
+        }
+      ],
+      "avoid": [
+        "Duty statements: Responsible for, Owned the roadmap for, In charge of",
+        "Worked with or Collaborated with engineering and design, with no outcome or decision",
+        "Helped, Assisted, Supported: hides what the PM actually decided",
+        "Rituals as achievements: ran standups, sprint planning, backlog grooming, wrote PRDs",
+        "Output as outcome: shipped 12 features, delivered 90% of the roadmap",
+        "Bare percentages with no baseline, timeframe or scope (increased engagement 30%)",
+        "Discovery volume with no decision (conducted 50 customer interviews)",
+        "Tool lists inside bullets (Jira, Figma, Amplitude) unless the posting requires a tool",
+        "Taking sole credit for a team result, or hiding your role behind we",
+        "Filler adjectives: successfully, various, key, strategic, cutting-edge"
+      ],
+      "seniority": {
+        "entry": "Show shipped scope you owned end to end, even if small, plus evidence of discovery and data skills; internships, side products and technical projects count when they have real users or measured results.",
+        "mid": "Own a feature area and prove you moved its core metric; each bullet should show a decision you made, not just a launch you took part in.",
+        "senior": "Show strategy across a product area: multi-quarter bets, what you chose not to do, revenue or retention at scale, and alignment of teams outside your own.",
+        "staff_or_lead": "Show portfolio or org-level impact: strategy adopted by leadership, new lines of business, PMs hired or coached, and planning or metrics mechanisms other teams now run on."
+      },
+      "structure": {
+        "bullets_per_role": "3 to 5 for the current or most relevant role, 2 to 3 for older roles, 1 to 2 for roles more than about 8 years back or unrelated.",
+        "ordering": "Strongest outcome first in every role. Aim for a mix: one launch or bet, one metric-moving optimization, one discovery or prioritization decision, one cross-functional or scale bullet. Reorder to mirror the posting's priorities.",
+        "length": "One page under about 10 years of experience. Each bullet is one sentence, 1 to 2 lines, under about 230 characters.",
+        "skills_section": "Short and specific: product methods (experimentation, discovery, pricing), domain (B2B SaaS, payments, marketplaces) and technical fluency (SQL, analytics tools, APIs, AI/LLM). No soft skills; prove those in bullets.",
+        "summary": "Optional. 1 to 2 lines with one positioning: domain, product type and one signature proof point. Most useful for career switchers and senior PMs."
+      },
+      "story_types": [
+        {
+          "name": "0-to-1 Launch",
+          "proves": "Can find a new opportunity, scope an MVP and get real adoption.",
+          "example": "Launched a contractor payouts product from concept to general availability in 5 months, reaching 900 businesses and $28M in monthly payment volume by month six."
+        },
+        {
+          "name": "Metric-Moving Optimization",
+          "proves": "Can move a core metric in an existing product.",
+          "example": "Lifted trial-to-paid conversion from 9% to 12% in one quarter by surfacing pricing during onboarding and adding a usage-based trial extension."
+        },
+        {
+          "name": "Discovery-Driven Bet",
+          "proves": "Starts from evidence about users, not opinions.",
+          "example": "Shadowed 15 dispatchers and found 40% of their day went to rescheduling, leading to an auto-reschedule feature now used on 70% of eligible jobs."
+        },
+        {
+          "name": "Kill or Cut Decision",
+          "proves": "Has the judgment to stop work that will not pay off.",
+          "example": "Killed a planned marketplace after a 6-week concierge test showed 4% repeat use, moving 5 engineers to retention work that cut monthly churn 0.6 points."
+        },
+        {
+          "name": "Experiment-Led Learning",
+          "proves": "Uses tests to decide and acts on negative results.",
+          "example": "Ran a 3-arm pricing page test that disproved the annual-discount hypothesis, avoiding a change modeled to cost $250K a year in monthly-plan revenue."
+        },
+        {
+          "name": "Enterprise Unblock",
+          "proves": "Connects product work directly to B2B revenue.",
+          "example": "Shipped role-based permissions in 8 weeks after mapping blockers across 20 lost deals, helping close 7 enterprise contracts worth $1.9M ARR within two quarters."
+        },
+        {
+          "name": "Platform as Business Value",
+          "proves": "Frames technical or internal work by what it unlocks.",
+          "example": "Led a shared notifications platform adopted by 6 product teams, cutting time to add a new notification from 3 weeks to 2 days and duplicate alerts 35%."
+        },
+        {
+          "name": "Cross-Team Alignment",
+          "proves": "Leads without authority across functions and teams.",
+          "example": "Aligned 4 product teams and sales on one account model, resolving 3 conflicting roadmaps and enabling a multi-product bundle that drove $2.1M in new bookings."
+        },
+        {
+          "name": "Responsible AI Launch",
+          "proves": "Can ship AI with quality, cost and trust guardrails.",
+          "example": "Shipped AI meeting summaries behind a 250-sample eval and user feedback loop, reaching 41% weekly use among eligible teams with under 2% flagged inaccurate."
+        },
+        {
+          "name": "Mechanism That Outlasted You",
+          "proves": "Builds durable practices that scale beyond one launch.",
+          "example": "Created a launch-readiness review and metrics template adopted by 9 PMs, cutting post-launch critical bugs 50% over the following 3 quarters."
+        }
+      ],
+      "rewrites": [
+        {
+          "weak": "Responsible for the onboarding experience.",
+          "strong": "Cut median onboarding from 9 days to 3 by replacing manual CSV setup with a guided import, reducing setup-related support tickets 40% in one quarter.",
+          "move": "Duty to outcome: named the metric, the baseline and the product decision that moved it."
+        },
+        {
+          "weak": "Worked with engineering and design to launch a new mobile app.",
+          "strong": "Launched the first mobile app for field technicians, reaching 12K weekly users in 90 days by scoping v1 to offline job checklists, the top need from 30 ride-alongs.",
+          "move": "Replaced worked with by the PM's own scoping decision and added adoption proof."
+        },
+        {
+          "weak": "Managed the product roadmap and ran sprint planning.",
+          "strong": "Reprioritized a 2-quarter roadmap around renewal risk, cutting 4 committed features to ship SSO first, which unblocked $1.8M in delayed enterprise renewals.",
+          "move": "Ritual to decision: showed what was cut, why, and the business result."
+        },
+        {
+          "weak": "Increased engagement by 30%.",
+          "strong": "Raised weekly use of saved reports from 18% to 24% of accounts in one quarter by adding scheduled email delivery, validated in a 4-week A/B test.",
+          "move": "Defined the metric and added baseline, timeframe, cause and evidence."
+        },
+        {
+          "weak": "Conducted 50 customer interviews to understand user needs.",
+          "strong": "Ran 50 interviews with finance admins showing approvals, not reporting, drove month-end delays; refocused the roadmap and the approvals beta cut close time by 2 days.",
+          "move": "Discovery to decision: tied research to what changed and the measured result."
+        },
+        {
+          "weak": "Leveraged AI to improve customer support using GPT-4 and LangChain.",
+          "strong": "Launched an AI reply assistant for 60 support agents after a 300-ticket eval, cutting average handle time from 11 to 7 minutes with no drop in CSAT.",
+          "move": "Dropped tool names and buzzwords; led with the user outcome and a quality guardrail."
+        }
+      ],
+      "questions": [
+        {
+          "cat": "Why this company",
+          "q": "Why do you want to work on [company]'s product, and what would you change or build first?"
+        },
+        {
+          "cat": "Why this company",
+          "q": "What about our customers or market makes you a strong fit for this PM role?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Tell us about the product launch you are proudest of and how you measured its success."
+        },
+        {
+          "cat": "Role-specific",
+          "q": "What is the biggest product mistake you have made, and what did you change afterward?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "How do you decide what not to build? Describe a feature or project you cut or killed."
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Walk us through how you discovered a customer problem and validated it before building."
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Describe a time data contradicted your intuition about a product decision. What did you do?"
+        },
+        {
+          "cat": "Behavioral & other",
+          "q": "Tell us about a time you aligned engineering, design and go-to-market teams that disagreed."
+        },
+        {
+          "cat": "Behavioral & other",
+          "q": "Describe a decision you made with incomplete information. How did it turn out?"
+        },
+        {
+          "cat": "AI",
+          "q": "How do you use AI tools in your day-to-day product work, and where have they changed how you work?"
+        },
+        {
+          "cat": "AI",
+          "q": "Describe an AI or LLM feature you shipped or would ship here. How would you measure quality and decide it is ready to launch?"
+        }
+      ],
+      "review_notes": [
+        "Kept the baseline plus timeframe rule but relaxed it: when baselines are confidential, a relative change plus scope (users, revenue, segment) is acceptable. The notes stated it as absolute.",
+        "Removed % of roadmap shipped and time-to-market as success metrics. They measure output, not outcome; they now appear only as supporting context.",
+        "Demoted NPS and CSAT to secondary metrics because attribution to one PM's work is weak and screeners know it.",
+        "The notes called a discovery bullet nearly expected, based on one hiring-manager panel. Reframed as strongly recommended, and only when the research changed a decision; interview counts alone are a weak pattern.",
+        "Added an AI Product Development skill with eval, deflection and cost metrics. The notes treated AI only as an interview topic, but AI feature work is now a common PM bullet.",
+        "Raised current-role bullets from 3 to 4 to a range of 3 to 5. Most guidance and real PM resumes use 4 to 5 for the current role and fewer for older roles.",
+        "Dropped the per-company stereotypes (Meta speed, Apple craft, etc.) from the spec. They are secondhand generalizations, and the application questions attributed to Stripe were not verified. Tailoring should come from the job description itself.",
+        "Added Platform and API Products so technical PM roles are covered, framed by what the platform unlocks rather than how it works.",
+        "Separated PM metrics from engineering and BizOps metrics: PM owns adoption, conversion, retention and monetization; latency or cost savings appear only when tied to a user or revenue result."
+      ],
+      "prompt_rules": "PM bullets. Formula: [outcome metric, baseline to result, timeframe] by [decision the candidate made] and [how it was executed]. Lead with the product outcome (adoption, activation, conversion, revenue, retention, churn) or with the decision itself (launched, cut, prioritized, reframed). Make the candidate's own call visible: what they chose, cut, tested or sequenced, separate from what the team built. Metrics that count: users or accounts adopting, activation, conversion, ARR or ARPU, churn or NRR, experiment lift, time to value, tickets deflected. Discovery counts only when tied to the decision it changed. Shipped features, roadmap % and sprints are outputs, not outcomes. Add scope where real: users, revenue, segments, teams aligned. No tool names unless the job description requires them. Past tense for past work; present tense only for ongoing current-role work. One sentence, 1 to 2 lines, under 230 characters, no first-person pronouns. Never invent numbers; if a number is missing write a [bracketed placeholder] such as [X%] or [N accounts]. Banned: responsible for, worked on, worked with, helped, assisted, participated in, managed the roadmap, successfully, various, leveraged, utilized, drove synergies. No em dashes."
+    },
+    "swe": {
+      "label": "Software Engineering",
+      "short_label": "SWE",
+      "headline": "Reviewers scan first for what you built, at what scale, how much better it made the system (latency, reliability, cost, velocity), and whether your stack matches theirs.",
+      "summary_formula": "[Level] [specialty, e.g. backend or full-stack] engineer with [N years] building [system type] at [scale, e.g. requests/day or users]; [one proof point with a number or placeholder]. Core stack: [3 to 5 technologies from the posting that you actually use]. Omit for new grads unless switching fields.",
+      "bullet_formulas": [
+        {
+          "name": "Impact First (XYZ)",
+          "template": "[Improved engineering metric] from [before] to [after] [at scale] by [technical change you made], using [technologies].",
+          "when": "Default for performance, reliability, cost and velocity work with before/after numbers."
+        },
+        {
+          "name": "Build and Adoption",
+          "template": "Built [system or feature] that [does what] for [users, teams or traffic], [adoption or business result], using [technologies].",
+          "when": "New services, features or internal tools where usage or enablement is the proof."
+        },
+        {
+          "name": "Problem, Fix, Result",
+          "template": "Diagnosed [failure or bottleneck] in [system], [fix you designed], [measured result and recurrence], using [technologies].",
+          "when": "Incidents, debugging, hardening and migrations where the risk removed is the story."
+        },
+        {
+          "name": "Lead Through Others",
+          "template": "[Authored, led or standardized] [design, RFC, migration] across [N engineers, teams or services], [outcome for those teams].",
+          "when": "Senior and staff bullets where impact flows through other engineers."
+        }
+      ],
+      "skills": [
+        {
+          "name": "System Design and Scale",
+          "definition": "Designing services and architectures that keep working as traffic, data and teams grow.",
+          "metrics": [
+            "requests per second or events per day",
+            "peak throughput vs before",
+            "p99 latency at peak load",
+            "data volume handled",
+            "headroom over current peak"
+          ],
+          "keywords": [
+            "system design",
+            "distributed systems",
+            "architecture",
+            "scalability",
+            "microservices",
+            "event-driven",
+            "high availability",
+            "horizontal scaling",
+            "message queue",
+            "kafka",
+            "high throughput",
+            "service-oriented"
+          ],
+          "verbs": [
+            "Architected",
+            "Designed",
+            "Scaled",
+            "Partitioned",
+            "Decomposed",
+            "Re-architected"
+          ],
+          "example": "Re-architected order ingestion from synchronous calls to an event-driven pipeline, raising peak throughput from 1.2K to 9K orders/sec over the holidays with zero dropped events, using Kafka and Go."
+        },
+        {
+          "name": "Performance Optimization",
+          "definition": "Making code, queries and services measurably faster or lighter.",
+          "metrics": [
+            "p50/p95/p99 latency",
+            "query execution time",
+            "CPU or memory use",
+            "throughput per node",
+            "response or render time"
+          ],
+          "keywords": [
+            "performance",
+            "latency",
+            "optimization",
+            "profiling",
+            "caching",
+            "query optimization",
+            "p99",
+            "low latency",
+            "indexing",
+            "bottleneck",
+            "benchmarking",
+            "performance tuning"
+          ],
+          "verbs": [
+            "Optimized",
+            "Reduced",
+            "Accelerated",
+            "Profiled",
+            "Cached",
+            "Tuned",
+            "Rewrote"
+          ],
+          "example": "Cut search API p99 latency from 1.8s to 220ms across 40M listings by profiling hot paths, adding a read-through cache and removing 3 N+1 queries, using Redis and PostgreSQL."
+        },
+        {
+          "name": "Reliability & Observability",
+          "definition": "Keeping systems available and making failures fast to detect, diagnose and recover from.",
+          "metrics": [
+            "availability %",
+            "SLO attainment",
+            "incidents per quarter by severity",
+            "failed deployment recovery time (MTTR)",
+            "time to detect",
+            "alert noise reduction"
+          ],
+          "keywords": [
+            "reliability",
+            "observability",
+            "on-call",
+            "incident response",
+            "monitoring",
+            "alerting",
+            "uptime",
+            "error budget",
+            "service level objective",
+            "fault tolerance",
+            "disaster recovery",
+            "postmortem",
+            "site reliability",
+            "distributed tracing"
+          ],
+          "verbs": [
+            "Hardened",
+            "Stabilized",
+            "Instrumented",
+            "Restored",
+            "Prevented",
+            "Eliminated",
+            "Automated"
+          ],
+          "example": "Raised payments API availability from 99.5% to 99.95% by adding idempotent retries and a circuit breaker for an unstable provider, cutting Sev-2 incidents from 6 to 1 per month, using Go."
+        },
+        {
+          "name": "Infrastructure and Cost",
+          "definition": "Building and running cloud infrastructure efficiently, with spend tied to usage.",
+          "metrics": [
+            "annual cloud spend saved",
+            "cost per request or per tenant",
+            "resource utilization",
+            "provisioning or environment setup time",
+            "services or workloads migrated"
+          ],
+          "keywords": [
+            "cloud infrastructure",
+            "infrastructure as code",
+            "terraform",
+            "kubernetes",
+            "docker",
+            "containers",
+            "cloud cost",
+            "finops",
+            "serverless",
+            "autoscaling",
+            "gcp",
+            "azure",
+            "cloud migration"
+          ],
+          "verbs": [
+            "Migrated",
+            "Provisioned",
+            "Right-sized",
+            "Containerized",
+            "Consolidated",
+            "Automated",
+            "Reduced"
+          ],
+          "example": "Cut annual cloud spend $310K by right-sizing 220 instances, moving batch jobs to spot capacity and adding per-team cost dashboards, with no change in SLO attainment, using AWS and Terraform."
+        },
+        {
+          "name": "Developer Productivity",
+          "definition": "Shortening the path from commit to production and making other engineers faster and safer.",
+          "metrics": [
+            "CI or build time",
+            "deployment frequency",
+            "lead time for changes",
+            "change failure rate",
+            "flaky test rate",
+            "engineers or repos onboarded"
+          ],
+          "keywords": [
+            "ci/cd",
+            "continuous integration",
+            "continuous delivery",
+            "build pipeline",
+            "deployment pipeline",
+            "developer experience",
+            "developer productivity",
+            "release engineering",
+            "monorepo",
+            "build times",
+            "github actions",
+            "internal tooling"
+          ],
+          "verbs": [
+            "Automated",
+            "Accelerated",
+            "Streamlined",
+            "Parallelized",
+            "Standardized",
+            "Built"
+          ],
+          "example": "Reduced CI time for a 300-engineer monorepo from 42 to 11 minutes with remote build caching and test sharding, enabling the move from weekly releases to daily deploys, using Bazel."
+        },
+        {
+          "name": "Testing and Code Quality",
+          "definition": "Keeping defects away from users through tests, review standards and safe rollouts.",
+          "metrics": [
+            "escaped defects or production bugs",
+            "regressions caught before release",
+            "change failure rate",
+            "rollback rate",
+            "flaky test rate"
+          ],
+          "keywords": [
+            "testing",
+            "unit tests",
+            "integration tests",
+            "end-to-end",
+            "test automation",
+            "code quality",
+            "code review",
+            "regression",
+            "quality assurance",
+            "static analysis",
+            "canary",
+            "feature flags"
+          ],
+          "verbs": [
+            "Prevented",
+            "Automated",
+            "Built",
+            "Enforced",
+            "Caught",
+            "Introduced"
+          ],
+          "example": "Built an end-to-end suite for 35 checkout flows run on every pull request, catching 3 to 4 regressions per release and cutting customer-reported checkout bugs 60% in 2 quarters, using Playwright."
+        },
+        {
+          "name": "Data Engineering",
+          "definition": "Building reliable data movement and processing that products and teams depend on.",
+          "metrics": [
+            "events or records processed per day",
+            "data freshness or pipeline latency",
+            "job failure rate",
+            "data quality incidents",
+            "compute cost per run"
+          ],
+          "keywords": [
+            "data pipelines",
+            "etl",
+            "dbt",
+            "data engineering",
+            "streaming",
+            "batch processing",
+            "spark",
+            "airflow",
+            "data warehouse",
+            "data quality",
+            "data modeling",
+            "snowflake",
+            "bigquery"
+          ],
+          "verbs": [
+            "Built",
+            "Engineered",
+            "Migrated",
+            "Streamed",
+            "Orchestrated",
+            "Backfilled"
+          ],
+          "example": "Replaced nightly batch ETL with a streaming pipeline handling 1.5B events/day, cutting dashboard freshness from 24 hours to under 5 minutes and job failures from ~4 a month to 0, using Spark."
+        },
+        {
+          "name": "Frontend and Mobile",
+          "definition": "Building fast, accessible client experiences on web or mobile and proving the user-facing effect.",
+          "metrics": [
+            "LCP, INP and CLS",
+            "bundle size",
+            "crash-free sessions %",
+            "app start time",
+            "conversion or task completion",
+            "accessibility conformance level"
+          ],
+          "keywords": [
+            "frontend",
+            "front-end",
+            "typescript",
+            "javascript",
+            "core web vitals",
+            "web performance",
+            "mobile development",
+            "ios development",
+            "android",
+            "react native",
+            "accessibility",
+            "wcag",
+            "design system",
+            "component library"
+          ],
+          "verbs": [
+            "Built",
+            "Shipped",
+            "Reduced",
+            "Redesigned",
+            "Migrated",
+            "Improved"
+          ],
+          "example": "Improved product-page LCP from 4.1s to 1.9s and INP from 380ms to 140ms on mobile via code splitting and image streaming, lifting add-to-cart rate 7% in an A/B test, using Next.js."
+        },
+        {
+          "name": "Security and Compliance",
+          "definition": "Reducing security risk and meeting compliance requirements without slowing delivery.",
+          "metrics": [
+            "vulnerabilities remediated and time to fix",
+            "services or systems covered",
+            "audit findings closed",
+            "secrets or credentials rotated",
+            "time to pass audit"
+          ],
+          "keywords": [
+            "application security",
+            "authentication",
+            "authorization",
+            "oauth",
+            "encryption",
+            "soc 2",
+            "identity and access",
+            "vulnerability",
+            "compliance",
+            "secrets management",
+            "zero trust",
+            "threat modeling",
+            "access control"
+          ],
+          "verbs": [
+            "Secured",
+            "Hardened",
+            "Remediated",
+            "Encrypted",
+            "Enforced",
+            "Rotated"
+          ],
+          "example": "Moved secrets for 28 services from config files into a managed vault with automatic rotation, closing 2 audit findings ahead of the company's first SOC 2 Type II, which passed with no exceptions."
+        },
+        {
+          "name": "AI and ML Engineering",
+          "definition": "Building, evaluating and serving ML or LLM features with measured quality, latency and cost.",
+          "metrics": [
+            "accuracy, precision or recall vs baseline",
+            "eval pass rate",
+            "inference latency",
+            "cost per 1K requests or per task",
+            "business metric moved"
+          ],
+          "keywords": [
+            "machine learning",
+            "llm",
+            "large language model",
+            "generative ai",
+            "model serving",
+            "inference",
+            "embeddings",
+            "vector database",
+            "retrieval-augmented",
+            "evals",
+            "fine-tuning",
+            "pytorch",
+            "mlops"
+          ],
+          "verbs": [
+            "Trained",
+            "Deployed",
+            "Evaluated",
+            "Fine-tuned",
+            "Served",
+            "Integrated",
+            "Distilled"
+          ],
+          "example": "Built a retrieval pipeline and 600-case eval harness for an LLM support bot, raising answer accuracy from 71% to 89% and cutting cost per conversation 45% by routing simple queries to a smaller model."
+        },
+        {
+          "name": "Product Feature Delivery",
+          "definition": "Shipping user-facing features end to end and tying the engineering work to product results.",
+          "metrics": [
+            "users or customers adopting the feature",
+            "revenue or conversion enabled",
+            "delivery vs estimate",
+            "feature usage",
+            "layers owned (UI, API, data)"
+          ],
+          "keywords": [
+            "full stack",
+            "full-stack",
+            "end-to-end ownership",
+            "product engineering",
+            "feature development",
+            "customer-facing",
+            "web application",
+            "rest apis",
+            "graphql",
+            "user-facing",
+            "product teams",
+            "websockets"
+          ],
+          "verbs": [
+            "Shipped",
+            "Built",
+            "Delivered",
+            "Launched",
+            "Implemented",
+            "Owned"
+          ],
+          "example": "Built real-time collaborative editing end to end, from the sync service to conflict-resolution UI, adopted by 30K users in its first month, using TypeScript, Node.js and WebSockets."
+        },
+        {
+          "name": "Technical Leadership",
+          "definition": "Raising other engineers' output through technical direction, design reviews, mentoring and standards.",
+          "metrics": [
+            "engineers or teams influenced",
+            "RFCs or design docs adopted",
+            "services migrated under your plan",
+            "mentee outcomes you can defend",
+            "cross-team incidents removed"
+          ],
+          "keywords": [
+            "technical leadership",
+            "tech lead",
+            "mentoring",
+            "design review",
+            "rfc",
+            "design docs",
+            "architecture review",
+            "technical direction",
+            "engineering standards",
+            "cross-team",
+            "staff engineer",
+            "technical roadmap"
+          ],
+          "verbs": [
+            "Led",
+            "Mentored",
+            "Authored",
+            "Drove",
+            "Championed",
+            "Standardized",
+            "Coordinated"
+          ],
+          "example": "Authored the RFC and led 5 engineers in moving 40 services off a shared database to per-service schemas over 2 quarters, removing the top source of cross-team outages."
+        }
+      ],
+      "metrics": [
+        {
+          "area": "Latency and performance",
+          "examples": [
+            "p50/p95/p99 latency before and after",
+            "query time",
+            "CPU or memory use",
+            "cold start time"
+          ]
+        },
+        {
+          "area": "Throughput and scale",
+          "examples": [
+            "requests per second",
+            "events or records per day",
+            "data volume",
+            "concurrent users",
+            "headroom over peak"
+          ]
+        },
+        {
+          "area": "Reliability",
+          "examples": [
+            "availability %",
+            "SLO attainment",
+            "incidents per quarter by severity",
+            "time to detect",
+            "failed deployment recovery time"
+          ]
+        },
+        {
+          "area": "Delivery (DORA)",
+          "examples": [
+            "deployment frequency",
+            "lead time for changes",
+            "change failure rate",
+            "failed deployment recovery time",
+            "rework rate",
+            "CI/build time"
+          ]
+        },
+        {
+          "area": "Quality",
+          "examples": [
+            "escaped defects",
+            "regressions caught pre-release",
+            "rollback rate",
+            "flaky test rate"
+          ]
+        },
+        {
+          "area": "Cost",
+          "examples": [
+            "annual cloud spend saved",
+            "cost per request or tenant",
+            "utilization"
+          ]
+        },
+        {
+          "area": "Client experience",
+          "examples": [
+            "LCP, INP, CLS",
+            "bundle size",
+            "crash-free sessions %",
+            "app start time",
+            "conversion from A/B test"
+          ]
+        },
+        {
+          "area": "ML and AI",
+          "examples": [
+            "accuracy or recall vs baseline",
+            "eval pass rate",
+            "inference latency",
+            "cost per 1K requests"
+          ]
+        },
+        {
+          "area": "Scope and leadership",
+          "examples": [
+            "engineers led or mentored",
+            "teams adopting your design or tool",
+            "services migrated"
+          ]
+        }
+      ],
+      "avoid": [
+        "Duty statements: Responsible for maintaining backend services",
+        "Technology lists with no outcome: Used React, Node.js and AWS",
+        "Leading with the tech stack instead of the result",
+        "Vanity or effort metrics: lines of code, number of PRs, commits, hours worked",
+        "Vague intensifiers: significantly improved, highly scalable, robust, seamless",
+        "Numbers you cannot explain or derive in an interview",
+        "Claiming you led work you contributed to (led the migration as one of 8 engineers)",
+        "Fixed bugs or wrote unit tests as a standalone achievement",
+        "Code coverage % as the only quality proof",
+        "Internal codenames and undefined acronyms with no context"
+      ],
+      "seniority": {
+        "entry": "Lead with internships, projects and education; show shipped, working code with defensible numbers (users, latency, tests) and name your stack clearly.",
+        "mid": "Show ownership of features or services end to end with concrete before/after engineering outcomes; move from implemented to owned, designed and shipped.",
+        "senior": "Shift from output to ownership quality: systems you designed, migrations you led, risk you reduced and technical calls a staff engineer could probe for 10 minutes.",
+        "staff_or_lead": "Scope is a problem domain, not headcount: RFCs or architecture that changed other teams' roadmaps, org-wide standards and mentorship at scale. Do not claim org-wide strategy you did not own."
+      },
+      "structure": {
+        "bullets_per_role": "3 to 5 for the current role, 2 to 4 for prior roles, 1 to 2 for old or unrelated roles. A few strong bullets beat many average ones.",
+        "ordering": "Order by relevance to the target role, then by impact; the bullet with the clearest scale or performance number goes first. Early-career resumes add a Projects section ordered by technical depth.",
+        "length": "One page under about 8 to 10 years. Bullets are 1 to 2 lines; define each acronym once; no paragraphs.",
+        "skills_section": "Grouped lines on page one: Languages | Frameworks | Data stores | Cloud and infra | Tools. List only what you could be interviewed on, and match the posting's exact terms where true.",
+        "summary": "Usually omit for new grads. Experienced engineers can use one line on specialty, years, scale and core stack. Education goes first for new grads or under about 3 years."
+      },
+      "story_types": [
+        {
+          "name": "Performance Win",
+          "proves": "Finds and fixes bottlenecks with measurement.",
+          "example": "Cut report generation from 90s to 6s for 8K daily users by moving aggregations into materialized views and streaming exports, using PostgreSQL."
+        },
+        {
+          "name": "Scaling Under Growth",
+          "proves": "Keeps systems working as load multiplies.",
+          "example": "Sharded the notifications service into 16 partitions ahead of a 5x traffic launch, sustaining 60K messages/sec at p99 under 120ms, using Kafka and Go."
+        },
+        {
+          "name": "Incident and Hardening",
+          "proves": "Handles production pressure and prevents recurrence.",
+          "example": "Led mitigation of a 3-hour checkout outage caused by connection pool exhaustion, then added load shedding and saturation alerts; no repeat in the following 9 months."
+        },
+        {
+          "name": "Safe Migration",
+          "proves": "Can change critical systems without breaking them.",
+          "example": "Migrated 120M user records from MySQL to PostgreSQL using dual writes and shadow reads, completing cutover with zero downtime and no data loss."
+        },
+        {
+          "name": "Cost Reduction",
+          "proves": "Engineering judgment with business awareness.",
+          "example": "Reduced log storage costs $180K a year with tiered retention and sampling of debug logs, keeping all data needed for incident response."
+        },
+        {
+          "name": "Velocity Multiplier",
+          "proves": "Makes other engineers faster.",
+          "example": "Built per-pull-request preview environments, cutting QA wait from 1 day to 15 minutes for 80 engineers, using Kubernetes and GitHub Actions."
+        },
+        {
+          "name": "Zero-to-One Service",
+          "proves": "Can design and ship a new system end to end.",
+          "example": "Designed and shipped a usage-metering service from scratch that bills 3,000 customers accurate to the cent, enabling the company's first usage-based plan."
+        },
+        {
+          "name": "Quality Gate",
+          "proves": "Raises the quality bar systematically, not one bug at a time.",
+          "example": "Introduced canary releases with automatic rollback on error-rate spikes, lowering change failure rate from 12% to 4% across 25 services."
+        },
+        {
+          "name": "AI or ML in Production",
+          "proves": "Ships ML or LLM features with evaluation, latency and cost discipline.",
+          "example": "Deployed a fraud-scoring model serving 2K predictions/sec at 30ms p99, catching 18% more fraud at the same false-positive rate, using PyTorch."
+        },
+        {
+          "name": "Leading Through Others",
+          "proves": "Technical influence beyond your own code.",
+          "example": "Wrote the API versioning standard and reviewed designs for 6 teams adopting it, cutting breaking-change incidents with mobile clients from 9 a year to 1."
+        }
+      ],
+      "rewrites": [
+        {
+          "weak": "Responsible for maintaining backend services in Java.",
+          "strong": "Owned 4 order-management services handling 25M requests/day, cutting p99 latency from 900ms to 240ms by batching database reads, using Java and PostgreSQL.",
+          "move": "Duty to ownership plus a measured outcome; technologies moved to the end."
+        },
+        {
+          "weak": "Used React, Redux, Node.js and AWS to build a dashboard.",
+          "strong": "Built a real-time fleet dashboard used daily by 1,200 dispatchers, replacing 30-second polling with sub-second live updates, using React, Node.js and WebSockets.",
+          "move": "Led with what was built and for whom; the stack follows the result."
+        },
+        {
+          "weak": "Significantly improved application performance.",
+          "strong": "Reduced checkout page load from 4.6s to 1.8s by code splitting and deferring third-party scripts, raising mobile conversion 6% in a 2-week A/B test.",
+          "move": "Vague intensifier to before/after numbers, the method and the user effect."
+        },
+        {
+          "weak": "Wrote unit tests and increased code coverage to 85%.",
+          "strong": "Added contract tests between 6 payment services, catching 11 breaking API changes before release in 2 quarters and cutting payment rollbacks from 5 to 1.",
+          "move": "Proxy metric (coverage) to defect outcomes."
+        },
+        {
+          "weak": "Led the migration to Kubernetes.",
+          "strong": "Migrated 14 of the team's 30 services to Kubernetes and wrote the rollout runbook the rest of the team followed, cutting deploy time from 25 to 6 minutes.",
+          "move": "Honest credit: stated your share precisely, then the outcome."
+        },
+        {
+          "weak": "Used GitHub Copilot to increase productivity by 50%.",
+          "strong": "Built an LLM-assisted codemod with human review that converted 1,900 legacy test files to the new framework in 3 weeks vs an estimated 4 months.",
+          "move": "Unverifiable productivity claim to a concrete AI-assisted deliverable with scope, control and time saved."
+        }
+      ],
+      "questions": [
+        {
+          "cat": "Why this company",
+          "q": "Why do you want to join [company]'s engineering team?"
+        },
+        {
+          "cat": "Why this company",
+          "q": "Which of our technical challenges or products interests you most, and why?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Describe the most technically challenging project you have worked on and your specific contribution."
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Tell us about a production incident you handled: detection, mitigation, root cause and follow-up."
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Describe a system you designed. What trade-offs did you make, and what would you change now?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Tell us about a time you significantly improved performance, reliability or cost. How did you measure it?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Share a link to code or a project you are proud of and explain your part in it."
+        },
+        {
+          "cat": "Behavioral & other",
+          "q": "Describe a technical disagreement with a teammate and how it was resolved."
+        },
+        {
+          "cat": "Behavioral & other",
+          "q": "Tell us about a time you shipped under a tight deadline. What did you cut or defer?"
+        },
+        {
+          "cat": "Behavioral & other",
+          "q": "How have you helped other engineers grow or raised your team's engineering standards?"
+        },
+        {
+          "cat": "AI",
+          "q": "How do you use AI coding assistants in your work, and how do you verify their output?"
+        },
+        {
+          "cat": "AI",
+          "q": "Describe an ML or LLM feature you built or integrated. How did you evaluate quality, latency and cost?"
+        }
+      ],
+      "review_notes": [
+        "Rejected the [verb] + [what you built] + [tech stack] + [result] order from the ex-Amazon guide. Result comes before technologies, which go last, consistent with Orosz and the requirement that impact is readable in a 6-second scan.",
+        "Updated frontend metrics: Interaction to Next Paint (INP) replaced First Input Delay as a Core Web Vital in March 2024. Use LCP, INP and CLS; FID bullets read as dated.",
+        "Updated accessibility references from WCAG 2.1 to WCAG 2.2 (W3C Recommendation, October 2023); 2.1 AA is still acceptable when a contract or law names it.",
+        "Updated DORA delivery metrics: MTTR is now framed as failed deployment recovery time, change failure rate was missing from the notes, and recent DORA reports add rework rate.",
+        "Demoted code coverage % and PR or commit counts from outcome metrics to supporting context. They are proxies or effort signals; escaped defects and change failure rate are stronger.",
+        "Flagged mentoring bullets that credit promotions (mentored 3 juniors, all promoted) as risky. Promotions have many causes; claim what you did and outcomes you can defend.",
+        "Added AI and ML Engineering as a skill with eval-based metrics, plus AI-assisted coding questions. Generic claims like used Copilot to boost productivity 50% are listed as a weak pattern.",
+        "Made the role-opening scope line from Tech Interview Handbook optional. It costs a line per role and helps mainly senior or ambiguous titles.",
+        "Kept SWE metrics separate from PM: adoption or conversion appears only as the downstream effect of an engineering change, never as the lead."
+      ],
+      "prompt_rules": "SWE bullets. Formula: [engineering outcome, before to after] [at scale] by [technical change the candidate made], using [technologies]. Lead with the result or a strong build verb (cut, scaled, built, migrated, hardened), never with the stack. Metrics that count: p50/p95/p99 latency, throughput (RPS, events/day), availability and SLOs, incidents, recovery time, deploy frequency, lead time, change failure rate, CI time, escaped defects, cloud cost, LCP/INP/CLS, crash-free rate, model accuracy or eval pass rate vs baseline. Include scale (traffic, data, users, services) where real. User or revenue effect may follow as a second clause. Technologies go at the end (using X and Y), at most 3, and only ones the candidate used. State the candidate's share honestly; do not turn contributed into led. Past tense for past work; present tense only for ongoing current-role work. One sentence, 1 to 2 lines, under 230 characters, no first-person pronouns. Never invent numbers; if a number is missing write a [bracketed placeholder] such as [X ms] or [N requests/day]. Banned: responsible for, worked on, helped, assisted, various, significantly, robust, seamless, cutting-edge, lines of code, number of PRs or commits, code coverage as the only result. No em dashes."
+    },
+    "bizops": {
+      "label": "Business Operations",
+      "short_label": "BizOps",
+      "headline": "Reviewers scan first for analysis that changed a business decision, the dollars or efficiency it produced, and proof you both planned the work and executed it.",
+      "summary_formula": "[Background, e.g. ex-consultant or finance analyst] with [N years] in [domain or sub-function, e.g. GTM strategy, marketplace ops] who turns [type of analysis] into [type of result]; [one signature result in $ or % or a placeholder]. Translate non-strategy experience into strategy and operations language.",
+      "bullet_formulas": [
+        {
+          "name": "Mini-Case",
+          "template": "[Analyzed what, at what scale] to find [insight], recommended [action] to [decision maker], [business result in $ or %].",
+          "when": "Default for strategy, analytics and recommendation work; reads like a case: problem, analysis, recommendation, result."
+        },
+        {
+          "name": "Input and Output",
+          "template": "[Led or ran program] across [input scale: teams, markets, contracts, $ spend], delivering [output: savings, revenue, cycle time] in [timeframe].",
+          "when": "Programs and operational execution where both effort scale and result matter."
+        },
+        {
+          "name": "Build the Machine",
+          "template": "Built [model, process, cadence or dashboard] used by [audience] to [decision it drives], cutting [time, error or cost] from [X] to [Y].",
+          "when": "Models, planning processes, KPI systems and automation; must name the decision it powers."
+        },
+        {
+          "name": "Identified and Captured",
+          "template": "Identified [$ opportunity] through [analysis], then [action you led with whom] to capture [$ realized] within [timeframe].",
+          "when": "Cost savings and revenue recovery; separates identified from realized dollars."
+        }
+      ],
+      "skills": [
+        {
+          "name": "Financial Modeling",
+          "definition": "Building models that size a decision in dollars and show what drives the outcome.",
+          "metrics": [
+            "$ size of the decision modeled",
+            "budget or plan the model supported",
+            "scenarios and sensitivities run",
+            "variance of model vs actuals",
+            "margin or unit economics change"
+          ],
+          "keywords": [
+            "financial modeling",
+            "financial model",
+            "unit economics",
+            "p&l",
+            "scenario analysis",
+            "sensitivity analysis",
+            "pricing model",
+            "margin analysis",
+            "cost model",
+            "driver-based",
+            "contribution margin",
+            "excel modeling"
+          ],
+          "verbs": [
+            "Modeled",
+            "Built",
+            "Sized",
+            "Quantified",
+            "Stress-tested",
+            "Valued"
+          ],
+          "example": "Built a driver-based unit economics model for 3 delivery tiers showing same-day orders lost $1.40 each; the CFO-approved repricing lifted contribution margin from 8% to 13% in 2 quarters."
+        },
+        {
+          "name": "Business Case Development",
+          "definition": "Turning an ambiguous opportunity into a recommendation with costs, benefits, risks and a clear ask.",
+          "metrics": [
+            "$ investment approved",
+            "projected vs realized ROI",
+            "payback period",
+            "net present value",
+            "time to decision"
+          ],
+          "keywords": [
+            "business case",
+            "investment case",
+            "roi analysis",
+            "return on investment",
+            "build vs buy",
+            "make vs buy",
+            "payback",
+            "cost-benefit",
+            "decision memo",
+            "executive presentation",
+            "recommendation",
+            "investment decisions"
+          ],
+          "verbs": [
+            "Recommended",
+            "Built",
+            "Secured",
+            "Proposed",
+            "Justified",
+            "Presented"
+          ],
+          "example": "Built the build-vs-buy case for a customer data platform, recommending a $420K/yr vendor over a 9-engineer internal build; leadership approved and it went live in 4 months vs 14 estimated."
+        },
+        {
+          "name": "Forecasting and Planning",
+          "definition": "Predicting demand, revenue, headcount or capacity accurately enough to plan against.",
+          "metrics": [
+            "forecast error (MAPE) before and after",
+            "variance to plan",
+            "headcount plan accuracy",
+            "capacity utilization",
+            "planning cycle time"
+          ],
+          "keywords": [
+            "forecasting",
+            "forecast",
+            "annual planning",
+            "operating plan",
+            "budgeting",
+            "capacity planning",
+            "headcount planning",
+            "demand planning",
+            "fp&a",
+            "variance analysis",
+            "long-range plan",
+            "workforce planning"
+          ],
+          "verbs": [
+            "Forecasted",
+            "Planned",
+            "Projected",
+            "Rebuilt",
+            "Allocated",
+            "Calibrated"
+          ],
+          "example": "Rebuilt support capacity forecasting around ticket drivers by product line, cutting monthly forecast error from 22% to 7% and avoiding 14 planned hires, about $1.1M in annual cost."
+        },
+        {
+          "name": "Cost Optimization",
+          "definition": "Finding and capturing cost reductions with an analysis behind each dollar.",
+          "metrics": [
+            "annualized $ savings realized",
+            "opex % reduction",
+            "cost per unit, order or ticket",
+            "spend analyzed",
+            "realized vs identified savings"
+          ],
+          "keywords": [
+            "cost reduction",
+            "cost savings",
+            "cost optimization",
+            "opex",
+            "operating expenses",
+            "spend analysis",
+            "margin improvement",
+            "cost per unit",
+            "cost efficiency",
+            "budget management",
+            "savings"
+          ],
+          "verbs": [
+            "Reduced",
+            "Cut",
+            "Saved",
+            "Identified",
+            "Consolidated",
+            "Captured",
+            "Renegotiated"
+          ],
+          "example": "Found $2.1M in annual SaaS overlap through a spend analysis of 380 contracts, then led consolidation with IT and procurement to capture $1.6M in savings within 2 quarters."
+        },
+        {
+          "name": "Process Optimization",
+          "definition": "Redesigning or automating workflows so work gets done faster, cheaper or with fewer errors.",
+          "metrics": [
+            "cycle time",
+            "throughput",
+            "hours saved per month",
+            "error or rework rate",
+            "% of volume automated",
+            "SLA attainment"
+          ],
+          "keywords": [
+            "process improvement",
+            "process optimization",
+            "workflow",
+            "automation",
+            "operational efficiency",
+            "cycle time",
+            "standard operating procedures",
+            "continuous improvement",
+            "bottleneck",
+            "scalable processes",
+            "manual processes",
+            "playbook",
+            "ai automation"
+          ],
+          "verbs": [
+            "Streamlined",
+            "Automated",
+            "Redesigned",
+            "Standardized",
+            "Eliminated",
+            "Codified",
+            "Scaled"
+          ],
+          "example": "Redesigned vendor onboarding from 11 manual handoffs to a 4-step automated workflow, cutting median cycle time from 19 days to 6 and freeing about 120 analyst hours per month."
+        },
+        {
+          "name": "GTM and Revenue Ops",
+          "definition": "Improving how sales, marketing and customer success turn pipeline into revenue.",
+          "metrics": [
+            "pipeline coverage",
+            "win rate",
+            "sales cycle length",
+            "share of reps at quota",
+            "bookings or ARR growth",
+            "lead response time"
+          ],
+          "keywords": [
+            "go-to-market",
+            "revenue operations",
+            "revops",
+            "sales operations",
+            "pipeline",
+            "territory planning",
+            "quota setting",
+            "sales compensation",
+            "salesforce",
+            "crm",
+            "bookings",
+            "win rate",
+            "lead routing"
+          ],
+          "verbs": [
+            "Rebalanced",
+            "Redesigned",
+            "Accelerated",
+            "Launched",
+            "Built",
+            "Grew"
+          ],
+          "example": "Rebalanced territories for 45 account executives using account potential scores, raising the share of reps at 80%+ of quota from 52% to 68% and new bookings 14% year over year."
+        },
+        {
+          "name": "KPIs and Operating Cadence",
+          "definition": "Defining the metrics and review rhythm leaders use to run the business.",
+          "metrics": [
+            "KPIs defined and adopted",
+            "decisions or actions traced to reviews",
+            "reporting hours saved",
+            "reports retired",
+            "metric accuracy issues fixed"
+          ],
+          "keywords": [
+            "kpis",
+            "metrics framework",
+            "dashboards",
+            "business reviews",
+            "operating cadence",
+            "weekly business review",
+            "executive reporting",
+            "scorecard",
+            "tableau",
+            "looker",
+            "business intelligence",
+            "performance management",
+            "qbr"
+          ],
+          "verbs": [
+            "Instituted",
+            "Defined",
+            "Established",
+            "Launched",
+            "Standardized",
+            "Built"
+          ],
+          "example": "Instituted a weekly business review of 12 KPIs across ops, finance and sales, replacing 9 ad hoc reports; it surfaced a refund spike that led to a policy fix saving $380K a year."
+        },
+        {
+          "name": "Data Analysis and SQL",
+          "definition": "Pulling and analyzing data yourself to find the root cause behind a business question.",
+          "metrics": [
+            "$ impact of the root cause found",
+            "share of the issue explained",
+            "records or periods analyzed",
+            "analysis turnaround time",
+            "recommendation adopted"
+          ],
+          "keywords": [
+            "sql",
+            "data analysis",
+            "root cause analysis",
+            "deep dive",
+            "analytical",
+            "python",
+            "statistical analysis",
+            "segmentation",
+            "cohort analysis",
+            "regression analysis",
+            "ad hoc analysis",
+            "insights"
+          ],
+          "verbs": [
+            "Analyzed",
+            "Diagnosed",
+            "Uncovered",
+            "Isolated",
+            "Segmented",
+            "Quantified",
+            "Queried"
+          ],
+          "example": "Diagnosed a 9-point gross margin drop by querying 2 years of order data in SQL, isolating it to 3 SKUs with mispriced freight; the pricing fix recovered $640K in annualized margin."
+        },
+        {
+          "name": "Strategic Planning",
+          "definition": "Shaping company or business-unit strategy, priorities and goals with leadership.",
+          "metrics": [
+            "budget or org size in scope",
+            "initiatives prioritized and funded",
+            "$ reallocated",
+            "OKR attainment",
+            "executives engaged"
+          ],
+          "keywords": [
+            "strategic planning",
+            "corporate strategy",
+            "strategy",
+            "annual operating plan",
+            "long-range planning",
+            "okrs",
+            "executive team",
+            "board materials",
+            "strategic initiatives",
+            "competitive analysis",
+            "market analysis",
+            "resource allocation"
+          ],
+          "verbs": [
+            "Shaped",
+            "Led",
+            "Facilitated",
+            "Developed",
+            "Prioritized",
+            "Set",
+            "Drove"
+          ],
+          "example": "Ran FY26 planning for a 600-person business unit, consolidating 31 team proposals into 8 funded priorities and reallocating $4.5M from low-return projects, approved by the exec team."
+        },
+        {
+          "name": "Market Expansion",
+          "definition": "Evaluating and launching new markets, segments, channels or partnerships.",
+          "metrics": [
+            "markets or cities launched",
+            "revenue from new markets",
+            "time to launch",
+            "market size evaluated",
+            "payback per market"
+          ],
+          "keywords": [
+            "market expansion",
+            "new markets",
+            "market entry",
+            "international expansion",
+            "market sizing",
+            "total addressable market",
+            "launch playbook",
+            "new verticals",
+            "partnerships",
+            "geographic expansion",
+            "growth strategy",
+            "business development"
+          ],
+          "verbs": [
+            "Launched",
+            "Expanded",
+            "Evaluated",
+            "Sized",
+            "Opened",
+            "Scaled",
+            "Prioritized"
+          ],
+          "example": "Sized and ranked 40 metro markets on demand, supply and regulatory cost, then led launch of the top 6 with ops and marketing, reaching $3.2M annualized revenue within 9 months."
+        },
+        {
+          "name": "Cross-Functional Programs",
+          "definition": "Driving multi-team initiatives from plan to completion, with clear owners, milestones and results.",
+          "metrics": [
+            "teams or functions involved",
+            "milestones hit on time",
+            "program $ impact",
+            "rollout completion %",
+            "escalations resolved"
+          ],
+          "keywords": [
+            "program management",
+            "cross-functional",
+            "stakeholder management",
+            "project management",
+            "change management",
+            "rollout",
+            "implementation",
+            "end-to-end execution",
+            "stakeholders",
+            "influence",
+            "executive alignment"
+          ],
+          "verbs": [
+            "Led",
+            "Drove",
+            "Orchestrated",
+            "Coordinated",
+            "Implemented",
+            "Delivered",
+            "Rolled out"
+          ],
+          "example": "Led a 7-team program moving 2,400 customers to new billing terms before a price change, finishing 3 weeks early with 1.2% churn vs 4% modeled and protecting about $2.8M in ARR."
+        },
+        {
+          "name": "Vendor Management",
+          "definition": "Selecting, negotiating and managing outside partners against cost, quality and service levels.",
+          "metrics": [
+            "contract value managed",
+            "savings negotiated",
+            "vendor SLA attainment",
+            "vendors consolidated",
+            "quality or error rate"
+          ],
+          "keywords": [
+            "vendor management",
+            "procurement",
+            "sourcing",
+            "contract negotiation",
+            "rfp",
+            "supplier",
+            "outsourcing",
+            "bpo",
+            "service level agreement",
+            "third-party",
+            "partner management",
+            "vendor selection"
+          ],
+          "verbs": [
+            "Negotiated",
+            "Selected",
+            "Sourced",
+            "Renegotiated",
+            "Consolidated",
+            "Managed"
+          ],
+          "example": "Ran an RFP across 5 support outsourcing vendors and negotiated per-ticket pricing, cutting cost per ticket from $6.80 to $4.90 while raising CSAT SLA attainment from 88% to 95%."
+        }
+      ],
+      "metrics": [
+        {
+          "area": "Cost and efficiency",
+          "examples": [
+            "annualized savings realized",
+            "opex % reduction",
+            "cost per unit, order or ticket",
+            "hours saved per month"
+          ]
+        },
+        {
+          "area": "Revenue and growth",
+          "examples": [
+            "revenue or bookings impact",
+            "win rate",
+            "pipeline coverage",
+            "ARR protected or recovered",
+            "revenue from new markets"
+          ]
+        },
+        {
+          "area": "Unit economics",
+          "examples": [
+            "contribution margin",
+            "gross margin",
+            "CAC and LTV/CAC",
+            "payback period"
+          ]
+        },
+        {
+          "area": "Planning accuracy",
+          "examples": [
+            "forecast error (MAPE) before and after",
+            "variance to plan",
+            "headcount plan accuracy",
+            "capacity utilization"
+          ]
+        },
+        {
+          "area": "Process performance",
+          "examples": [
+            "cycle time",
+            "throughput",
+            "% automated",
+            "error or rework rate",
+            "SLA attainment"
+          ]
+        },
+        {
+          "area": "Investment decisions",
+          "examples": [
+            "$ approved",
+            "ROI projected vs realized",
+            "NPV",
+            "payback period"
+          ]
+        },
+        {
+          "area": "Input scale (pair with an output)",
+          "examples": [
+            "$ spend or budget analyzed",
+            "markets, contracts or accounts covered",
+            "teams or stakeholders in a program",
+            "executive audience"
+          ]
+        }
+      ],
+      "avoid": [
+        "Duty statements: Responsible for operations, Owned weekly reporting",
+        "Created dashboards for leadership, with no decision or result",
+        "Tool lists as the achievement: Proficient in SQL, Tableau and Excel",
+        "Analysis with no decision or result: Conducted market analysis",
+        "Savings identified presented as savings realized",
+        "Input scale with no outcome, or an outcome with no scale",
+        "Consulting filler: drove synergies, value-add, best-in-class, holistic",
+        "Strategy-only bullets with no execution, or execution with no reasoning",
+        "Dense multi-line bullets that bury the number",
+        "First-person pronouns and objective statements"
+      ],
+      "seniority": {
+        "entry": "Prove analytical horsepower and execution: models, SQL deep dives and process fixes with measured results; translate consulting, banking or finance work into business-decision language.",
+        "mid": "Own initiatives end to end: the recommendation you made, the cross-functional rollout you drove, and the dollars or efficiency realized.",
+        "senior": "Show you set the agenda: planning processes, multi-quarter programs, executive alignment, portfolio-level savings or growth, and leadership of analysts.",
+        "staff_or_lead": "Show company-level strategy and operating systems: planning and KPI mechanisms the company runs on, influence over a P&L or major budget, and building the BizOps function itself."
+      },
+      "structure": {
+        "bullets_per_role": "3 to 5 for the current role, 2 to 3 for older roles. Former consultants can group bullets by theme or engagement type rather than listing every client.",
+        "ordering": "Lead with the largest dollar or decision impact. Balance strategic bullets (recommendation, planning) with operational ones (rollout, process) so both show. Mirror the posting's sub-function: GTM, finance, product or customer ops.",
+        "length": "One page under about 10 years. 1 to 2 lines per bullet, and every bullet contains a number or a placeholder.",
+        "skills_section": "Specific analytical toolkit: SQL, spreadsheet modeling, Python, a BI tool (Tableau or Looker), CRM (Salesforce); methods such as financial modeling, forecasting and experiment or causal analysis. List certifications only if the posting asks.",
+        "summary": "Optional 1 to 2 lines: background, domain and one signature result. Most useful for career switchers translating experience into strategy and operations language."
+      },
+      "story_types": [
+        {
+          "name": "Savings Found and Captured",
+          "proves": "Turns analysis into realized dollars.",
+          "example": "Audited 18 months of carrier invoices, found 7% overbilling on fuel surcharges, and recovered $540K plus a contract change worth $300K a year."
+        },
+        {
+          "name": "Revenue Lever",
+          "proves": "Finds growth through operational or GTM change.",
+          "example": "Scored 2,100 under-penetrated accounts on product usage and launched an expansion play with customer success, adding $1.3M in upsell ARR in 2 quarters."
+        },
+        {
+          "name": "Mini-Case Recommendation",
+          "proves": "Structured problem solving from question to decision.",
+          "example": "Traced rising delivery costs to low route density, recommended zone-based scheduling to the COO, and cut cost per delivery 11% across 4 cities."
+        },
+        {
+          "name": "Investment Decision",
+          "proves": "Builds cases that leadership acts on.",
+          "example": "Built the case for a second support hub vs expanding the existing site, saving a modeled $2.6M over 3 years; approved and staffed to 80 agents in 6 months."
+        },
+        {
+          "name": "Forecast That Changed a Plan",
+          "proves": "Planning rigor that redirects resources early.",
+          "example": "Built a cohort-based revenue forecast that flagged a $4M second-half shortfall 3 months early, prompting pricing and hiring changes that closed 70% of the gap."
+        },
+        {
+          "name": "Process Rebuild",
+          "proves": "Executes, not just analyzes.",
+          "example": "Rebuilt the order exception process with a triage queue and SLAs, cutting exceptions older than 48 hours from 1,400 to 90 within 8 weeks."
+        },
+        {
+          "name": "Launch Operations",
+          "proves": "Can stand up something new end to end with limited resources.",
+          "example": "Wrote the new-city launch playbook and ran the first 3 launches, cutting time from signed lease to first order from 14 weeks to 7."
+        },
+        {
+          "name": "Operating Cadence",
+          "proves": "Creates mechanisms the business runs on.",
+          "example": "Launched a monthly operating review with KPI scorecards for 8 department heads, now the main forum for headcount and budget decisions."
+        },
+        {
+          "name": "Cross-Functional Program",
+          "proves": "Leads without authority across many teams.",
+          "example": "Led a 9-team SOC 2 readiness program across security, legal and engineering, passing the audit in 5 months and unblocking $3.1M in enterprise pipeline."
+        },
+        {
+          "name": "AI in Operations",
+          "proves": "Applies AI pragmatically, with quality controls.",
+          "example": "Piloted LLM summaries of 6K monthly support escalations with QA sampling, cutting weekly voice-of-customer reporting from 2 days to 3 hours."
+        }
+      ],
+      "rewrites": [
+        {
+          "weak": "Responsible for weekly reporting to leadership.",
+          "strong": "Automated the weekly exec review from 6 source systems, cutting prep from 10 hours to 1; its new refund trend view flagged a $300K leak that was fixed within one quarter.",
+          "move": "Duty to result: time saved plus the decision the reporting drove."
+        },
+        {
+          "weak": "Created dashboards for the sales team using Tableau.",
+          "strong": "Built a pipeline-health dashboard flagging stalled deals for 60 reps, lifting stage-2-to-close conversion from 18% to 23% in two quarters, using Tableau on Salesforce data.",
+          "move": "Named the decision the dashboard drives and the measured result; tool moved to the end."
+        },
+        {
+          "weak": "Conducted market analysis for international expansion.",
+          "strong": "Ranked 25 countries on demand, payments readiness and regulatory cost, recommending the UK and Germany first; both launched within 8 months and reached $2.4M ARR in year one.",
+          "move": "Analysis to recommendation to result: a mini-case."
+        },
+        {
+          "weak": "Identified $3M in cost savings.",
+          "strong": "Identified $3M in cloud and SaaS overlap across 400 contracts and captured $2.2M in annual savings by leading renegotiations with finance and IT within 2 quarters.",
+          "move": "Separated identified from realized dollars and added input scale and your action."
+        },
+        {
+          "weak": "Helped improve operational efficiency across teams.",
+          "strong": "Redesigned refund approvals across support and finance for about 8K refunds a month, cutting cycle time from 5 days to 1 and manual touches 70%.",
+          "move": "Vague help to a specific process, scale and before/after."
+        },
+        {
+          "weak": "Leveraged AI to streamline operations.",
+          "strong": "Built an LLM classifier with spot-check QA to code 15K monthly vendor invoices, raising auto-coding from 40% to 82% and shortening month-end close by 2 days.",
+          "move": "Vague AI claim to a specific use, a control and an operational result."
+        }
+      ],
+      "questions": [
+        {
+          "cat": "Why this company",
+          "q": "Why Business Operations or Strategy & Operations at [company] specifically?"
+        },
+        {
+          "cat": "Why this company",
+          "q": "What is one strategic or operational challenge you think [company] faces, and how would you approach it?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Tell us about a recommendation you drove with data. What was the decision and the impact?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "How do you prioritize competing requests from multiple stakeholders? Give an example."
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Describe a process you redesigned or automated. How did you measure success?"
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Walk us through a model you built: key drivers, assumptions and how leadership used it."
+        },
+        {
+          "cat": "Role-specific",
+          "q": "Tell us about a time your analysis pointed to a conclusion leadership did not want. What happened?"
+        },
+        {
+          "cat": "Behavioral & other",
+          "q": "Describe a time you influenced a team you had no authority over."
+        },
+        {
+          "cat": "Behavioral & other",
+          "q": "Tell us about a project you ran with limited resources or unclear ownership."
+        },
+        {
+          "cat": "AI",
+          "q": "How do you use AI tools in analysis, modeling or reporting, and how do you check their work?"
+        },
+        {
+          "cat": "AI",
+          "q": "Where would you apply AI or automation to improve an operational process at [company], and how would you measure it?"
+        }
+      ],
+      "review_notes": [
+        "Page length: the notes allowed 1 to 2 pages. Corrected to one page under about 10 years, which matches consulting and banking norms that most S&O screeners come from.",
+        "Demoted certifications (PMP, Lean Six Sigma). They rarely affect tech BizOps or S&O screens and matter more in manufacturing or logistics operations management.",
+        "Updated Sales Ops terminology to RevOps and GTM operations, which is how most current tech postings phrase it.",
+        "Dashboards are not outcomes. The notes suggested pairing dashboards with a % performance improvement; the spec requires naming the decision the dashboard drives and its result.",
+        "Defined forecast accuracy precisely as forecast error (MAPE) or variance to plan, before and after, instead of an undefined accuracy %.",
+        "Added an identified vs realized savings rule. Screeners discount identified-only savings, and the notes' examples mixed the two.",
+        "Kept the input plus output metric pairing from the DoorDash S&O guidance and turned it into a named formula.",
+        "Reframed the consulting-background point: the notes implied consulting, banking or PE is near-required. Operators and analysts from other paths get hired too when bullets read as mini-cases, so the spec focuses on translation, not pedigree.",
+        "Recalibrated seniority to tech S&O levels (analyst or associate, manager, senior manager, director or head). The $60M division, 120-person example is general operations management, not typical tech BizOps scope.",
+        "Added AI in Operations as a story type and two AI questions; the notes did not cover AI for this field."
+      ],
+      "prompt_rules": "BizOps bullets. Formula (mini-case): [analysis done, at what scale] to find [insight], [recommendation or action and who decided], [business result in $ or %]. Lead with the business result or the analytical action; the reader must see the decision the work drove. Pair an input metric (spend analyzed, markets, contracts, teams, stakeholders) with an output metric (annualized savings realized, revenue or bookings, margin, cycle time, hours saved, forecast error, SLA attainment, ROI or payback). Write realized vs identified savings accurately. Show both strategy and execution across the bullets. Tools (SQL, Excel, Tableau, Salesforce) appear only as the means, near the end, never as the achievement. Dashboards, models and reports must name the decision they enabled. Past tense for past work; present tense only for ongoing current-role work. One sentence, 1 to 2 lines, under 230 characters, no first-person pronouns. Never invent numbers; if a number is missing write a [bracketed placeholder] such as [$X] or [N markets]. Banned: responsible for, helped, assisted, supported, worked on, drove synergies, value-add, best-in-class, holistic, various, leveraged, created dashboards for leadership. No em dashes."
+    }
+  },
+  "sources": [
+    {
+      "title": "Laszlo Bock XYZ resume formula (Inc. / Business Insider coverage)",
+      "url": "https://www.inc.com",
+      "used_for": "PM and SWE outcome-first formula"
+    },
+    {
+      "title": "IGotAnOffer: Product manager resume",
+      "url": "https://igotanoffer.com/blogs/product-manager/product-manager-resume",
+      "used_for": "PM bullet patterns and scope signals"
+    },
+    {
+      "title": "Lenny's Newsletter x The Skip hiring-manager panel (archive)",
+      "url": "https://the-pm-archive.vercel.app",
+      "used_for": "PM discovery and decision emphasis"
+    },
+    {
+      "title": "Underdog.io: Product manager resume template",
+      "url": "https://underdog.io/blog/product-manager-resume-template",
+      "used_for": "PM structure and weak patterns"
+    },
+    {
+      "title": "Stripe product manager job description",
+      "url": "https://stripe.com/jobs/product-manager-jd.pdf",
+      "used_for": "PM rigor and outcome ownership emphasis"
+    },
+    {
+      "title": "Tech Interview Handbook: Resume",
+      "url": "https://www.techinterviewhandbook.org/resume/",
+      "used_for": "SWE formula, skills section grouping, education placement"
+    },
+    {
+      "title": "Gergely Orosz: How to write a developer resume recruiters will read (freeCodeCamp)",
+      "url": "https://www.freecodecamp.org/news/how-to-write-a-developer-resume-recruiters-will-read",
+      "used_for": "Technologies at end of bullet, impact first, adoption framing"
+    },
+    {
+      "title": "techinterview.org: Quantifying impact on an engineering resume",
+      "url": "https://techinterview.org",
+      "used_for": "SWE metric categories, team vs individual credit"
+    },
+    {
+      "title": "techinterview.org: Senior and staff/principal engineer resume guides",
+      "url": "https://techinterview.org",
+      "used_for": "SWE seniority guidance"
+    },
+    {
+      "title": "devplaybook: 50 software engineer resume bullet points",
+      "url": "https://devplaybook.cc/blog/software-engineer-resume-50-bullet-points-star-format",
+      "used_for": "SWE example categories (paraphrased, not copied)"
+    },
+    {
+      "title": "web.dev: Interaction to Next Paint is officially a Core Web Vital",
+      "url": "https://web.dev/blog/inp-cwv-launch",
+      "used_for": "Correction: INP replaced FID (March 2024)"
+    },
+    {
+      "title": "W3C: WCAG 2.2 is a W3C Recommendation",
+      "url": "https://www.w3.org/news/2023/web-content-accessibility-guidelines-wcag-2-2-is-a-w3c-recommendation",
+      "used_for": "Correction: WCAG 2.2 is the current version"
+    },
+    {
+      "title": "CD Foundation: DORA's five software delivery metrics",
+      "url": "https://cd.foundation/blog/2025/10/16/dora-5-metrics/",
+      "used_for": "Correction: DORA metric names, change failure rate, rework rate"
+    },
+    {
+      "title": "RocketBlocks: BizOps resume tips",
+      "url": "https://www.rocketblocks.me/blog/bizops-resume-tips.php",
+      "used_for": "BizOps hard and soft skill bullets"
+    },
+    {
+      "title": "RocketBlocks: BizOps career path and breaking in",
+      "url": "https://www.rocketblocks.me/guide/bizops/career-path.php",
+      "used_for": "BizOps background and hiring paths"
+    },
+    {
+      "title": "How to Survive (DoorDash S&O author): Passing the resume screen",
+      "url": "https://howtosurvive.substack.com/p/so-how-does-one-pass-the-resume-screening",
+      "used_for": "Input plus output metrics, strategy plus execution"
+    },
+    {
+      "title": "Leland: Business operations resume guide",
+      "url": "https://www.joinleland.com/library/a/business-operations-resume-guide",
+      "used_for": "BizOps metrics and hiring-manager expectations"
+    },
+    {
+      "title": "IGotAnOffer: BizOps interview prep",
+      "url": "https://igotanoffer.com/en/advice/bizops-interview-prep",
+      "used_for": "BizOps sub-functions and interview questions"
+    },
+    {
+      "title": "ResumeGeni: Operations analyst resume guide",
+      "url": "https://resumegeni.com/blog/operations-analyst-resume-guide",
+      "used_for": "Analysis to insight to outcome chain"
+    }
+  ]
+}
