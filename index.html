@@ -627,7 +627,7 @@ async function initDb(){
   try { uid = user ? await user.id() : null; } catch (e) {}
   if (!db || !uid) { loadLocal(); setStatus("local", "Saved in this browser"); backfillTracker(); afterLoad(); return; }
   col = db.collection("data/users/" + uid);
-  watchInbox(db);
+  watchInbox(db, uid);
   const timer = setTimeout(() => setStatus("local", "Can't reach your saved work yet; showing the default bank"), 10000);
   try {
     const [b, a, r, m, ls, lt, tk, ro, pr] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile"].map(k => col.doc(k).get()));
@@ -1332,9 +1332,11 @@ $("k-inbox").addEventListener("click", async e => {
   saveBulk(); renderBulk();
   for (const x of items) { try { await inboxCol.doc(x._id).delete(); } catch (err) {} }
 });
-function watchInbox(db){
+function watchInbox(db, uid){
   try {
-    inboxCol = db.collection("inbox");
+    // Per viewer: only the data/users/<uid>/ prefix is private to that viewer.
+    // A top-level "inbox" collection would be shared with everyone who can open this page.
+    inboxCol = db.collection("data/users/" + uid + "/inbox/items");
     inboxCol.onSnapshot(snap => { inboxItems = snap.docs.map(d => Object.assign({_id:d.id}, d.data())).filter(x => x.jd); renderBulk(); }, () => { inboxCol = null; renderBulk(); });
   } catch (e) { inboxCol = null; }
 }
