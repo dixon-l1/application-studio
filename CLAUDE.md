@@ -1,0 +1,40 @@
+# Application Studio: notes for Claude
+
+## What this is
+A single-page app (`index.html`, plain HTML/CSS/JS, no build step) that tailors resumes, cover letters and application answers to each job from one bank of accomplishment bullets. It's a public portfolio project. The owner is a product manager who shows it to recruiters.
+
+## Hard rule: no personal data in this repo
+The repo is public. Never commit a real person's resume content, phone, email, address, employer details or bullets. Screenshots and examples must use made-up profiles (the current ones use "Jamie Rivera"). The owner keeps a personal copy of the app with his own data on claude.ai. That copy never goes in this repo. Commit with the GitHub no-reply email, not a personal one.
+
+## How it runs
+- It's built to run as a Claude artifact on claude.ai. The runtime gives `window.claude.use(name)`, which returns capability objects:
+  - `sample(prompt, {modelTier, signal, onText})` and `sample.json(...)` for Claude calls. These can't browse the web.
+  - `db` for per-user storage under `data/users/<uid>/<key>`.
+  - `user.id()`.
+  - `downloads.save({filename, data})`.
+- Each person who opens the shared artifact runs on their own Claude plan.
+- Viewers with view-only access can't write `db`, so the app falls back to `localStorage` (keys prefixed `as1.`). There's also a JSON backup and restore under Profile & data.
+- Opened as a plain file, Claude features are unavailable. Quick match, PDFs, the tracker and manual setup still work.
+- Libraries load from cdnjs: jsPDF 2.5.1, JSZip 3.10.1, mammoth 1.6.0 and pdf.js 3.11.174 (its worker is loaded via a script tag). The page can't reach other hosts, so job links can't be fetched. Users paste the job description.
+
+## Structure inside index.html
+- **Data layer:** `PROFILE`, `ROLES`, `FIELDS`, `SETTINGS`, `STORIES` and `FIELD_SPECS`.
+  - `FIELD_SPECS` is the field guides for pm, swe and bizops, inlined from `research/field-guides.json`.
+  - `rebuildSkills()`, `fieldRulesText()`, `skillNames()`, `buildQuestions()` and `defaultPicks()` derive the rest.
+- **Persistence:** `persist(key, data)` writes `localStorage` first, then the db. `initDb()` and `loadLocal()` load it back.
+  - Keys: profile, roles, bank, answers, resumes, letters, letterstyle, tracker, bankmeta.
+- **Views** (hash routes): tailor, bulk, letter, bank, answers, tracker, guide.
+- **Onboarding overlay** (`#ob`), four steps:
+  1. Pick fields.
+  2. Upload resume, bullet bank and writing samples.
+  3. Stick-figure house-building animation while three Claude calls run: parse the resume, build the bank, and learn the writing style.
+  4. The app opens.
+- **Profile and data modal** (`#pf`): edit education, sections and fields; backup, restore, start over.
+- **Bullet rules everywhere:** never invent numbers, put a missing number in a `[bracket placeholder]` with a fallback version of the bullet, no em dashes, one skill per bullet.
+
+## Testing
+Run headless Chrome with Playwright. Mock `window.claude` with an init script that returns canned JSON for each prompt; match on the prompt's first words, e.g. "Extract structured data", "You are an expert resume writer", "You are tailoring", "Write a cover letter". For offline tests, swap the cdnjs URLs for local copies of the libraries. Check `pageerror` events and take screenshots of each view.
+
+## Decisions already made
+- **Vercel or another standalone host:** this would need a server-side Claude API key, billed separately through the Claude Console. Anthropic doesn't allow third-party sites to sign people in with a Claude plan. The owner chose to keep it on claude.ai so each friend uses their own plan.
+- **Research:** `research/notes.md` is the raw research. `research/field-guides.json` is the reviewed spec of formulas, skills, metrics, rewrites, seniority signals and questions for each field.
