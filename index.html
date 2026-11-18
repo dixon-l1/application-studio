@@ -518,7 +518,8 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
 "use strict";
 /* ---------------- Default content ---------------- */
 /* ---------------- Profile, fields and defaults (filled by onboarding) ---------------- */
-let PROFILE = {name:"", contact:"", education:[], sections:[]};
+const SECTION_KEYS_DEFAULT = ["experience", "education", "skills"];
+let PROFILE = {name:"", contact:"", education:[], sections:[], order:SECTION_KEYS_DEFAULT.slice()};
 let ROLES = [];
 let FIELDS = [];
 let SETTINGS = {defaultPicks:{}, onboarded:false};
@@ -636,7 +637,7 @@ async function persist(key, data){
     else { col = null; setStatus("local", "Saved in this browser"); }
   } finally { writing[key] = false; }
 }
-function applyProfileDoc(d){ if (!d) return; PROFILE = Object.assign({name:"", contact:"", education:[], sections:[]}, d.profile || {}); FIELDS = d.fields || []; SETTINGS = Object.assign({defaultPicks:{}, onboarded:false}, d.settings || {}); STORIES = d.stories || []; }
+function applyProfileDoc(d){ if (!d) return; PROFILE = Object.assign({name:"", contact:"", education:[], sections:[], order:SECTION_KEYS_DEFAULT.slice()}, d.profile || {}); FIELDS = d.fields || []; SETTINGS = Object.assign({defaultPicks:{}, onboarded:false}, d.settings || {}); STORIES = d.stories || []; }
 function afterLoad(){ rebuildSkills(); renderBrand(); if (!work.picks || !Object.keys(work.picks).length) work.picks = defaultPicks(); renderAll(); if (!SETTINGS.onboarded) openOnboarding(1); }
 function loadLocal(){
   try { const x = JSON.parse(localStorage.getItem("as1.profile") || "null"); if (x) applyProfileDoc(x); } catch (e) {}
@@ -881,7 +882,9 @@ function layoutPDF(doc, m){
   font("normal", FS); y += 13; doc.text(PROFILE.contact, PW / 2, y, {align:"center"});
   if (m.summary) { font("italic", FS); for (const ln of doc.splitTextToSize(PDFSAFE(m.summary), W)) { y += LEAD; doc.text(ln, PW / 2, y, {align:"center"}); } }
   const section = t => { need(30); y += 17; drawRuns(scRuns(t, 12.5), L, y, "bold"); doc.setLineWidth(.8); doc.line(L, y + 3, R, y + 3); y += 3; };
-  section("Professional Experience");
+  const labeled = (lab, txt) => { font("bold", FS); const lw = lab ? doc.getTextWidth(lab + " ") : 0; font("normal", FS); const lines = doc.splitTextToSize(PDFSAFE(txt), W - lw); lines.forEach((ln, i) => { y += LEAD; if (i === 0 && lab) { font("bold", FS); doc.text(PDFSAFE(lab), L, y); font("normal", FS); } doc.text(ln, L + lw, y); }); };
+  const drawSection = {
+    experience: () => { if (!m.roles.length) return; section("Professional Experience");
   for (const r of m.roles) {
     need(LEAD * 3 + 4);
     y += 14;
@@ -894,7 +897,8 @@ function layoutPDF(doc, m){
       lines.forEach((ln, i) => { y += LEAD; if (i === 0) doc.text("•", L + 4, y); doc.text(ln, L + 14, y); });
     }
   }
-  const labeled = (lab, txt) => { font("bold", FS); const lw = lab ? doc.getTextWidth(lab + " ") : 0; font("normal", FS); const lines = doc.splitTextToSize(PDFSAFE(txt), W - lw); lines.forEach((ln, i) => { y += LEAD; if (i === 0 && lab) { font("bold", FS); doc.text(PDFSAFE(lab), L, y); font("normal", FS); } doc.text(ln, L + lw, y); }); };
+    },
+    education: () => {
   if ((PROFILE.education || []).length) {
     section("Education");
     for (const e of PROFILE.education) {
@@ -903,8 +907,13 @@ function layoutPDF(doc, m){
       if (e.detail) { font("normal", FS); doc.splitTextToSize(PDFSAFE(e.detail), W - 8).forEach(ln => { y += LEAD; doc.text(ln, L + 8, y); }); }
     }
   }
+    },
+    skills: () => {
   const secs = (PROFILE.sections || []).filter(x => x.text);
   if (secs.length) { section(secs.length === 1 && secs[0].label ? secs[0].label : "Skills"); y += 2; secs.forEach(x => labeled(secs.length === 1 ? "" : (x.label ? x.label + ":" : ""), x.text)); }
+    }
+  };
+  for (const k of sectionOrder()) drawSection[k]();
   return {pages, y, max: PH - BOT};
 }
 function measure(){
@@ -943,6 +952,19 @@ function renderTailor(){
   $("t-insight").innerHTML = h;
   renderPaper(); renderFit(); renderSaved();
 }
+const SECTION_KEYS = SECTION_KEYS_DEFAULT;
+const SECTION_LABEL = {experience:"Professional Experience", education:"Education", skills:"Skills"};
+// Stored on the profile. Anything missing or unknown is repaired here, so one source of
+// truth drives the preview, the PDF and the plain-text copy.
+function sectionOrder(){
+  const want = (PROFILE.order || []).filter(k => SECTION_KEYS.includes(k));
+  return want.concat(SECTION_KEYS.filter(k => !want.includes(k)));
+}
+function skillsHTML(){
+  const secs = (PROFILE.sections || []).filter(x => x.text); if (!secs.length) return "";
+  return '<div class="sec">' + esc(secs.length === 1 && secs[0].label ? secs[0].label : "Skills") + "</div>" +
+    secs.map(x => "<div>" + (secs.length > 1 && x.label ? "<b>" + esc(x.label) + ":</b> " : "") + esc(x.text) + "</div>").join("");
+}
 function educationHTML(){
   const ed = PROFILE.education || []; if (!ed.length) return "";
   return '<div class="sec">Education</div>' + ed.map(e => '<div class="rh"><b>' + esc(e.school) + "</b><span>" + esc(e.loc) + "</span></div>" + (e.degree || e.date ? '<div class="rh edu2"><b style="font-variant:normal">' + esc(e.degree) + "</b><span>" + esc(e.date) + "</span></div>" : "") + (e.detail ? '<div class="edu2">' + esc(e.detail) + "</div>" : "")).join("");
@@ -951,22 +973,22 @@ function renderPaper(){
   let h = '<div class="nm">' + esc(PROFILE.name || "Your Name") + '</div><div class="ct">' + esc(PROFILE.contact) + "</div>";
   if (!ROLES.length) { $("paper").innerHTML = h + '<div class="note" style="margin-top:24px;font-family:var(--sans)">Your roles and bullets appear here after setup. Open Profile &amp; data to restart setup, or add roles on the Bullet bank tab.</div>'; return; }
   if (work.summary && work.positioning) h += '<div class="sum">' + esc(work.positioning) + "</div>";
-  h += '<div class="sec">Professional Experience</div>';
+  let expH = '<div class="sec">Professional Experience</div>';
   for (const r of ROLES) {
     const ids = (work.picks[r.id] || []).filter(byId);
-    h += '<div class="rh"><b>' + esc(r.company) + (r.desc ? " (" + esc(r.desc) + ")" : "") + "</b><span>" + esc(r.loc) + '</span></div><div class="rt"><span>' + esc(r.title) + "</span><span>" + esc(r.dates) + "</span></div><ul>";
+    expH += '<div class="rh"><b>' + esc(r.company) + (r.desc ? " (" + esc(r.desc) + ")" : "") + "</b><span>" + esc(r.loc) + '</span></div><div class="rt"><span>' + esc(r.title) + "</span><span>" + esc(r.dates) + "</span></div><ul>";
     ids.forEach((id, i) => {
       const tw = work.overrides[id];
       const why = work.rationale && work.rationale[id] ? ' title="' + esc(id + ": " + work.rationale[id]) + '"' : ' title="' + esc(id + " · " + byId(id).skill) + '"';
       const sug = (work.suggestions || {})[id];
       const sugHTML = sug ? '<div class="sug" contenteditable="false"><span class="sx"><span class="sl">Suggested wording for this job</span>' + esc(sug) + '</span><button data-act="sugyes" data-id="' + id + '" title="Use this wording for this resume" aria-label="Accept suggested wording">✓</button><button class="no" data-act="sugno" data-id="' + id + '" title="Keep my wording" aria-label="Reject suggested wording">✕</button></div>' : "";
-      h += "<li" + why + ">" + markGaps(bulletText(id)) + (tw ? '<button class="tw" data-act="revert" data-id="' + id + '" title="Reworded to mirror the job. Click to restore your original wording.">tailored ×</button>' : "") +
+      expH += "<li" + why + ">" + markGaps(bulletText(id)) + (tw ? '<button class="tw" data-act="revert" data-id="' + id + '" title="Reworded to mirror the job. Click to restore your original wording.">tailored ×</button>' : "") +
         '<span class="ctl"><button data-act="up" data-role="' + r.id + '" data-i="' + i + '" aria-label="Move up">↑</button><button data-act="down" data-role="' + r.id + '" data-i="' + i + '" aria-label="Move down">↓</button><button data-act="swap" data-role="' + r.id + '" data-i="' + i + '" aria-label="Swap for another bullet">⇄</button><button data-act="rm" data-role="' + r.id + '" data-i="' + i + '" aria-label="Remove">×</button></span>' + sugHTML + '</li>';
     });
-    h += '</ul><button class="add" data-act="add" data-role="' + r.id + '">+ Add a ' + esc(r.company) + " bullet</button>";
+    expH += '</ul><button class="add" data-act="add" data-role="' + r.id + '">+ Add a ' + esc(r.company) + " bullet</button>";
   }
-  h += educationHTML(); if (false) h += '<div class="rh"><b>' + esc(PROFILE.school) + "</b><span>" + esc(PROFILE.schoolLoc) + '</span></div><div class="rh edu2"><b style="font-variant:normal">' + esc(PROFILE.degree) + "</b><span>" + esc(PROFILE.degreeDate) + '</span></div><div class="edu2"><b>Product Management:</b> ' + esc(PROFILE.pm) + "</div>";
-  { const secs = (PROFILE.sections || []).filter(x => x.text); if (secs.length) h += '<div class="sec">' + esc(secs.length === 1 && secs[0].label ? secs[0].label : "Skills") + "</div>" + secs.map(x => "<div>" + (secs.length > 1 && x.label ? "<b>" + esc(x.label) + ":</b> " : "") + esc(x.text) + "</div>").join(""); }
+  const parts = {experience: ROLES.length ? expH : "", education: educationHTML(), skills: skillsHTML()};
+  for (const k of sectionOrder()) h += parts[k];
   $("paper").innerHTML = h;
 }
 function renderFit(){
@@ -1234,12 +1256,18 @@ async function copyText(t, btn){
 }
 function flash(btn, t){ if (!btn) return; const o = btn.textContent; btn.textContent = t; setTimeout(() => { btn.textContent = o; }, 1400); }
 function resumeText(){
-  const m = resumeModel(); let s = (PROFILE.name || "").toUpperCase() + "\n" + PROFILE.contact + "\n" + (m.summary ? m.summary + "\n" : "") + "\nPROFESSIONAL EXPERIENCE\n";
-  for (const r of m.roles) { s += "\n" + r.company + (r.desc ? " (" + r.desc + ")" : "") + " | " + r.loc + "\n" + r.title + " | " + r.dates + "\n" + r.bullets.map(b => "• " + b).join("\n") + "\n"; }
-  if ((PROFILE.education || []).length) s += "\nEDUCATION\n" + PROFILE.education.map(e => e.school + (e.loc ? " | " + e.loc : "") + "\n" + e.degree + (e.date ? " | " + e.date : "") + (e.detail ? "\n" + e.detail : "")).join("\n") + "\n";
-  const secsT = (PROFILE.sections || []).filter(x => x.text); if (secsT.length) s += "\nSKILLS\n" + secsT.map(x => (x.label ? x.label + ": " : "") + x.text).join("\n") + "\n";
+  const m = resumeModel();
+  const secsT = (PROFILE.sections || []).filter(x => x.text);
+  const textSection = {
+    experience: () => m.roles.length ? "\nPROFESSIONAL EXPERIENCE\n" + m.roles.map(r => "\n" + r.company + (r.desc ? " (" + r.desc + ")" : "") + " | " + r.loc + "\n" + r.title + " | " + r.dates + "\n" + r.bullets.map(b => "• " + b).join("\n") + "\n").join("") : "",
+    education: () => (PROFILE.education || []).length ? "\nEDUCATION\n" + PROFILE.education.map(e => e.school + (e.loc ? " | " + e.loc : "") + "\n" + e.degree + (e.date ? " | " + e.date : "") + (e.detail ? "\n" + e.detail : "")).join("\n") + "\n" : "",
+    skills: () => secsT.length ? "\n" + (secsT.length === 1 && secsT[0].label ? secsT[0].label.toUpperCase() : "SKILLS") + "\n" + secsT.map(x => (x.label ? x.label + ": " : "") + x.text).join("\n") + "\n" : ""
+  };
+  let s = (PROFILE.name || "").toUpperCase() + "\n" + PROFILE.contact + "\n" + (m.summary ? m.summary + "\n" : "");
+  for (const k of sectionOrder()) s += textSection[k]();
   return s;
 }
+
 async function downloadPDF(btn){
   const J = window.jspdf && window.jspdf.jsPDF;
   if (!J || !downloads) { flash(btn, "PDF unavailable here"); return; }
@@ -2289,6 +2317,8 @@ function renderProfile(){
     '<div class="stack"><div class="h">You</div><div class="row" style="flex-wrap:nowrap"><label class="f" style="flex:1">Name<input type="text" id="pf-name" value="' + esc(PROFILE.name) + '"></label></div>' +
     '<label class="f">Contact line<input type="text" id="pf-contact" value="' + esc(PROFILE.contact) + '" placeholder="(555) 555-5555 | you@email.com | linkedin.com/in/you | City, ST"></label></div>' +
     '<div class="stack"><div class="h">Roles you\'re applying to</div><div class="row">' + FIELD_KEYS.map(k => '<label class="row small"><input type="checkbox" data-pf="field" value="' + k + '"' + (FIELDS.includes(k) ? " checked" : "") + "> " + esc(fieldLabel(k)) + "</label>").join("") + '</div><div class="small muted">Adding a field adds its skills, guide and common questions.</div></div>' +
+    '<div class="stack"><div class="h">Section order</div><div class="small muted">Technical resumes often lead with skills. This applies to the preview, the PDF and the copied text.</div>' +
+      '<div class="stack" style="gap:4px">' + sectionOrder().map((k, i, arr) => '<div class="row" style="justify-content:space-between;flex-wrap:nowrap;border:1px solid var(--line);border-radius:7px;padding:6px 10px"><span>' + esc(SECTION_LABEL[k]) + '</span><span class="row" style="flex-wrap:nowrap;gap:2px"><button class="btn sm ghost" data-pf="secup" data-i="' + i + '"' + (i === 0 ? " disabled" : "") + ' aria-label="Move ' + esc(SECTION_LABEL[k]) + ' up">\u2191</button><button class="btn sm ghost" data-pf="secdown" data-i="' + i + '"' + (i === arr.length - 1 ? " disabled" : "") + ' aria-label="Move ' + esc(SECTION_LABEL[k]) + ' down">\u2193</button></span></div>').join("") + "</div></div>" +
     '<div class="stack"><div class="row" style="justify-content:space-between"><div class="h">Education</div><button class="btn sm" data-pf="addedu">+ Add school</button></div>' +
       ed.map((e, i) => '<div class="pf-row" data-edu="' + i + '"><input type="text" data-k="school" value="' + esc(e.school) + '" placeholder="School"><input type="text" data-k="loc" value="' + esc(e.loc) + '" placeholder="Location"><input type="text" data-k="degree" value="' + esc(e.degree) + '" placeholder="Degree"><input type="text" data-k="date" value="' + esc(e.date) + '" placeholder="Date"><input type="text" data-k="detail" value="' + esc(e.detail) + '" placeholder="Honors or coursework (optional)" class="wide"><button class="btn sm ghost" data-pf="rmedu" data-i="' + i + '">Remove</button></div>').join("") + "</div>" +
     '<div class="stack"><div class="row" style="justify-content:space-between"><div class="h">Other sections</div><button class="btn sm" data-pf="addsec">+ Add section</button></div>' +
@@ -2307,6 +2337,12 @@ $("pf").addEventListener("click", async e => {
   if (e.target.id === "pf") { closeProfile(); return; }
   const b = e.target.closest("[data-pf]"); if (!b || b.tagName === "INPUT") return; const a = b.dataset.pf;
   if (a === "close") closeProfile();
+  if (a === "secup" || a === "secdown") {
+    readProfileForm();
+    const ord = sectionOrder(); const i = +b.dataset.i; const j = a === "secup" ? i - 1 : i + 1;
+    if (j >= 0 && j < ord.length) { [ord[i], ord[j]] = [ord[j], ord[i]]; PROFILE.order = ord; }
+    renderProfile(); renderPaper(); renderFit();
+  }
   if (a === "addedu" || a === "addsec" || a === "rmedu" || a === "rmsec") {
     readProfileForm();
     if (a === "addedu") PROFILE.education.push({school:"", loc:"", degree:"", date:"", detail:""});
@@ -2322,7 +2358,7 @@ $("pf").addEventListener("click", async e => {
   }
   if (a === "reset") {
     if (b.dataset.ok !== "1") { b.dataset.ok = "1"; b.textContent = "This deletes everything. Click again"; setTimeout(() => { b.dataset.ok = ""; b.textContent = "Start over"; }, 5000); return; }
-    PROFILE = {name:"", contact:"", education:[], sections:[]}; ROLES = []; bank = []; FIELDS = []; SETTINGS = {defaultPicks:{}, onboarded:false}; STORIES = []; questions = []; resumes = []; letters = []; tracker = []; letterStyle = {samples:[], guide:""}; work = freshWork(); saveWorkLocal();
+    PROFILE = {name:"", contact:"", education:[], sections:[], order:SECTION_KEYS_DEFAULT.slice()}; ROLES = []; bank = []; FIELDS = []; SETTINGS = {defaultPicks:{}, onboarded:false}; STORIES = []; questions = []; resumes = []; letters = []; tracker = []; letterStyle = {samples:[], guide:""}; work = freshWork(); saveWorkLocal();
     ["profile","roles","bank","answers","resumes","letters","tracker","letterstyle"].forEach(k => persist(k, k === "profile" ? {profile:PROFILE, fields:FIELDS, settings:SETTINGS, stories:STORIES} : k === "letterstyle" ? letterStyle : []));
     rebuildSkills(); closeProfile(); renderAll(); renderBrand(); openOnboarding(1);
   }
