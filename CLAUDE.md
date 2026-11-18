@@ -1,4 +1,4 @@
-# Atria Application Studio: notes for Claude
+# Atrium Application Studio: notes for Claude
 
 ## What this is
 A single-page app (`index.html`, plain HTML/CSS/JS, no build step) that tailors resumes, cover letters and application answers to each job from one bank of accomplishment bullets. It's a public portfolio project. The owner is a product manager who shows it to recruiters.

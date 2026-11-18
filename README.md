@@ -1,8 +1,8 @@
-# Atria Application Studio
+# Atrium Application Studio
 
 Tailor a resume, cover letter and application answers to every job from one bank of your best accomplishments.
 
-Job seekers rewrite the same resume dozens of times, and the bullets usually get weaker each time. Atria Application Studio flips that: you build one bank of strong, verified bullets once, and every application pulls the best ones for that job. The AI picks and lightly rewords, but it never invents a fact or a number.
+Job seekers rewrite the same resume dozens of times, and the bullets usually get weaker each time. Atrium Application Studio flips that: you build one bank of strong, verified bullets once, and every application pulls the best ones for that job. The AI picks and lightly rewords, but it never invents a fact or a number.
 
 ![Onboarding: pick the roles you're applying to](docs/onboarding.png)
 
