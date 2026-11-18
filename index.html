@@ -93,6 +93,9 @@ button.chip{cursor:pointer}
 .cov .chip .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chip .sw{flex:none}
 #b-skills .bar{width:44px}
+.cov .covh{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:12px 0 2px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.cov .covh:first-child{margin-top:0}
+.cov .covh span{font-variant-numeric:tabular-nums;font-weight:500}
 .bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;align-self:center;width:90px}
 .bar i{display:block;height:100%;background:var(--accent)}
 /* fit meter */
@@ -1143,7 +1146,13 @@ function renderBank(){
   sel.value = bankFilter.role;
   const counts = Object.fromEntries(SKILLS.map(([s]) => [s, 0])); bank.forEach(b => { if (counts[b.skill] !== undefined) counts[b.skill]++; });
   const mx = Math.max(1, ...Object.values(counts));
-  $("b-skills").innerHTML = SKILLS.map(([s, c]) => '<button class="chip' + (bankFilter.skill === s ? " on" : "") + '" data-act="skill" data-skill="' + esc(s) + '"><span class="sw" style="background:' + c + '"></span><span class="lbl">' + esc(s) + '</span></button><span class="row small muted" style="gap:6px;flex-wrap:nowrap"><span class="bar"><i style="width:' + Math.round(counts[s] / mx * 100) + '%;background:' + c + '"></i></span>' + counts[s] + "</span>").join("");
+  const chip = ([s, c], muted) => '<button class="chip' + (bankFilter.skill === s ? " on" : muted ? " miss" : "") + '" data-act="skill" data-skill="' + esc(s) + '"><span class="sw" style="background:' + c + '"></span><span class="lbl">' + esc(s) + "</span></button>";
+  const covRow = ([s, c]) => chip([s, c], false) + '<span class="row small muted" style="gap:6px;flex-wrap:nowrap"><span class="bar"><i style="width:' + Math.round(counts[s] / mx * 100) + "%;background:" + c + '"></i></span>' + counts[s] + "</span>";
+  const gapRow = ([s, c]) => chip([s, c], true) + "<span></span>";
+  const covHead = (t, n) => '<div class="covh">' + esc(t) + "<span>" + n + "</span></div>";
+  const have = SKILLS.filter(([s]) => counts[s] > 0), gaps = SKILLS.filter(([s]) => !counts[s]);
+  $("b-skills").innerHTML = (have.length ? covHead("In your bank", have.length) + have.map(covRow).join("") : "") +
+    (gaps.length ? covHead("No bullet proves these yet", gaps.length) + gaps.map(gapRow).join("") : "");
   const q = bankFilter.q.toLowerCase();
   let h = "";
   for (const r of ROLES) {
