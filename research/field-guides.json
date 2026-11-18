@@ -218,9 +218,7 @@
       "hypothesis",
       "split test",
       "multivariate",
-      "statistical significance",
       "feature flag",
-      "holdout",
       "test and learn",
       "conversion optimization"
      ],
@@ -388,14 +386,12 @@
       "large language model",
       "ai features",
       "ai-powered",
-      "machine learning",
       "evals",
       "model evaluation",
       "prompt engineering",
       "copilot",
       "ai agent",
-      "agentic",
-      "retrieval-augmented"
+      "agentic"
      ],
      "verbs": [
       "Launched",
@@ -929,7 +925,6 @@
      "keywords": [
       "data pipelines",
       "etl",
-      "dbt",
       "data engineering",
       "streaming",
       "batch processing",
@@ -937,7 +932,6 @@
       "airflow",
       "data warehouse",
       "data quality",
-      "data modeling",
       "snowflake",
       "bigquery"
      ],
@@ -1646,8 +1640,6 @@
       "weekly business review",
       "executive reporting",
       "scorecard",
-      "tableau",
-      "looker",
       "business intelligence",
       "performance management",
       "qbr"
@@ -1768,8 +1760,8 @@
      "example": "Sized and ranked 40 metro markets on demand, supply and regulatory cost, then led launch of the top 6 with ops and marketing, reaching $3.2M annualized revenue within 9 months."
     },
     {
-     "name": "Cross-Functional Programs",
-     "definition": "Driving multi-team initiatives from plan to completion, with clear owners, milestones and results.",
+     "name": "Program Management",
+     "definition": "Running a multi-team initiative to completion with owners, milestones and a date that holds.",
      "metrics": [
       "teams or functions involved",
       "milestones hit on time",
@@ -2305,8 +2297,8 @@
      "example": "Traced a 38% checkout drop-off to one address-validation step for international cohorts, a fix that lifted completed orders 9% in the affected markets."
     },
     {
-     "name": "Forecasting and Planning Analytics",
-     "definition": "Projecting demand, revenue or capacity accurately enough for the business to plan against, and owning the miss.",
+     "name": "Forecasting and Time Series",
+     "definition": "Projecting a series forward with a method you can defend, and owning how close it lands.",
      "metrics": [
       "forecast accuracy or MAPE",
       "variance to plan",
@@ -2317,15 +2309,13 @@
      "keywords": [
       "forecasting",
       "time series",
-      "demand planning",
-      "capacity planning",
       "seasonality",
-      "variance analysis",
-      "budget vs actual",
       "arima",
       "prophet",
       "regression",
-      "scenario analysis"
+      "forecast accuracy",
+      "mape",
+      "demand forecasting"
      ],
      "verbs": [
       "Forecast",
