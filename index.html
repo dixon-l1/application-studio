@@ -636,7 +636,9 @@ function setStatus(kind, text){ $("sdot").className = "dot " + kind; $("stext").
 async function persist(key, data){
   try { localStorage.setItem("as1." + key, JSON.stringify(data)); } catch (e) {}
   if (!col) return;
-  pending[key] = data;
+  // Hand the runtime its own copy. Whatever it does to what we give it - freezing it as
+  // it serialises, for one - must not reach the state this page keeps editing.
+  pending[key] = thaw(data);
   if (writing[key]) return;
   writing[key] = true;
   setStatus("busy", "Saving…");
@@ -1066,16 +1068,20 @@ function recordJobInner(w){
   if (!terms.length) return;
   const at = Date.now();
   const gaps = new Set((w.gaps || []).map(memKey));
-  jdMemory.jobs.unshift({at, company:w.company || "", title:w.title || "", field:activeField(w), terms:terms.map(memKey).filter(Boolean).slice(0, 30)});
-  jdMemory.jobs = jdMemory.jobs.slice(0, MEM_JOBS);
   const once = new Map();                       // count each term once per posting, not once per mention
   for (const raw of terms) { const k = memKey(raw); if (k && k.length >= 3 && !once.has(k)) once.set(k, String(raw).trim()); }
+  const nextTerms = {};
+  for (const [k, v] of Object.entries(jdMemory.terms || {})) nextTerms[k] = {n:v.n | 0, gap:v.gap | 0, last:v.last | 0, label:v.label || k};
   for (const [k, label] of once) {
-    const e = jdMemory.terms[k] || (jdMemory.terms[k] = {n:0, gap:0, last:0, label});
+    const e = nextTerms[k] || (nextTerms[k] = {n:0, gap:0, last:0, label});
     e.n++; e.last = at; if (gaps.has(k)) e.gap++;
   }
+  const job = {at, company:w.company || "", title:w.title || "", field:activeField(w), terms:terms.map(memKey).filter(Boolean).slice(0, 30)};
+  jdMemory = {jobs:[job].concat(jdMemory.jobs || []).slice(0, MEM_JOBS), terms:nextTerms,
+              proposals:(jdMemory.proposals || []).slice(), dismissed:(jdMemory.dismissed || []).slice()};
   persist("jdmemory", jdMemory);
 }
+
 // Terms asked for often enough, that the bank still cannot answer.
 function memoryTerms(){
   const dismissed = new Set((jdMemory.dismissed || []).map(memKey));
@@ -1086,6 +1092,7 @@ function memoryTerms(){
     .sort((a, b) => (b.gap - a.gap) || (b.n - a.n))
     .slice(0, 12);
 }
+const setProposal = (id, patch) => Object.assign({}, jdMemory, {proposals:(jdMemory.proposals || []).map(x => x.id === id ? Object.assign({}, x, patch) : x)});
 const pendingProposals = () => (jdMemory.proposals || []).filter(p => p.status === "new");
 function renderMemory(){
   const el = $("m-card"); if (!el) return;
@@ -1382,9 +1389,9 @@ $("m-card").addEventListener("click", async e => {
   const b = e.target.closest("[data-mem]"); if (!b) return; const act = b.dataset.mem;
   const p = jdMemory.proposals.find(x => x.id === b.dataset.id);
   if (act === "draft") { await draftFromMemory(); return; }
-  if (act === "skip") { (jdMemory.dismissed = jdMemory.dismissed || []).push(b.dataset.term); persist("jdmemory", jdMemory); renderMemory(); return; }
+  if (act === "skip") { jdMemory = Object.assign({}, jdMemory, {dismissed:(jdMemory.dismissed || []).concat([b.dataset.term])}); persist("jdmemory", jdMemory); renderMemory(); return; }
   if (!p) return;
-  if (act === "reject") { p.status = "rejected"; persist("jdmemory", jdMemory); renderMemory(); navBadge(); return; }
+  if (act === "reject") { jdMemory = setProposal(p.id, {status:"rejected"}); persist("jdmemory", jdMemory); renderMemory(); navBadge(); return; }
   if (act === "accept") {
     const text = (document.querySelector('[data-mem="text"][data-id="' + p.id + '"]') || {}).value || p.text;
     const role = (document.querySelector('[data-mem="role"][data-id="' + p.id + '"]') || {}).value || p.role;
@@ -1392,11 +1399,11 @@ $("m-card").addEventListener("click", async e => {
     if (!ROLES.some(r => r.id === role)) return;
     const nb = {id:nextId(role), role, skill, text:String(text).trim(), alt:null, fallback:null, tags:[]};
     const last = bank.map(x => x.role).lastIndexOf(role); bank.splice(last < 0 ? bank.length : last + 1, 0, nb);
-    p.status = "accepted"; persist("bank", bank); persist("jdmemory", jdMemory);
+    jdMemory = setProposal(p.id, {status:"accepted"}); persist("bank", bank); persist("jdmemory", jdMemory);
     renderMemory(); navBadge(); renderBank(); renderTailor();
   }
 });
-$("m-card").addEventListener("input", e => { const t = e.target.closest('[data-mem="text"]'); if (!t) return; const p = jdMemory.proposals.find(x => x.id === t.dataset.id); if (p) p.text = t.value; });
+$("m-card").addEventListener("input", e => { const t = e.target.closest('[data-mem="text"]'); if (!t) return; jdMemory = setProposal(t.dataset.id, {text:t.value}); });
 
 /* bank events */
 $("b-q").addEventListener("input", e => { bankFilter.q = e.target.value; renderBank(); });
