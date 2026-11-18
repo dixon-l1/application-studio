@@ -8,7 +8,7 @@ Job seekers rewrite the same resume dozens of times, and the bullets usually get
 
 ## How it works
 
-1. **Onboarding.** Pick the roles you're applying to (Product Management, Software Engineering, Business Operations). Upload your resume and a list of accomplishments, plus optional writing samples.
+1. **Onboarding.** Pick the roles you're applying to (Product Management, Software Engineering, Business Operations, Data Analytics). Upload your resume and a list of accomplishments, plus optional writing samples.
 2. **Claude builds your studio** while two Romans carry benches, statues, vases and plants into an atrium. It parses your resume, rewrites your accomplishments into strong bullets in the style of each field, tags each bullet with the one skill it proves, and learns your writing voice from your samples.
 3. **Apply.** Paste a job description and get a one-page resume, a cover letter and application answers tailored to it.
 
@@ -35,6 +35,7 @@ Different fields reward different evidence, so each field gets its own guide (`r
 | Product Management | The product outcome moved (adoption, activation, revenue, churn) and the decision the PM made to move it |
 | Software Engineering | Before-and-after numbers on latency, throughput, reliability, cost or delivery speed, at real scale |
 | Business Operations | A mini case: analysis, recommendation, result in dollars or time saved |
+| Data Analytics | The decision the analysis changed, the data behind it, and the tools used |
 
 Each guide has bullet formulas, 12 skills with the metrics that count for each, weak-to-strong rewrites, seniority signals and common application questions. The guides came from research into published hiring guidance and successful resumes (`research/notes.md`), then a separate resume-expert review pass that corrected outdated metrics and removed weak patterns. The guides drive every prompt in the app.
 

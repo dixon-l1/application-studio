@@ -19,7 +19,7 @@ The repo is public. Never commit a real person's resume content, phone, email, a
 
 ## Structure inside index.html
 - **Data layer:** `PROFILE`, `ROLES`, `FIELDS`, `SETTINGS`, `STORIES` and `FIELD_SPECS`.
-  - `FIELD_SPECS` is the field guides for pm, swe and bizops, inlined from `research/field-guides.json`.
+  - `FIELD_SPECS` is the field guides for pm, swe, bizops and data, inlined from `research/field-guides.json`. Each job is written by one vertical only: `detectField()` scores the posting against each field's keywords and `activeField()` prefers the user's pick from the Tailor tab, then the prompt carries that field's rules and skills alone.
   - `rebuildSkills()`, `fieldRulesText()`, `skillNames()`, `buildQuestions()` and `defaultPicks()` derive the rest.
 - **Persistence:** `persist(key, data)` writes `localStorage` first, then the db. `initDb()` and `loadLocal()` load it back.
   - Keys: profile, roles, bank, answers, resumes, letters, letterstyle, tracker, bankmeta.
