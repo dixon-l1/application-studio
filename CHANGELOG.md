@@ -1,8 +1,11 @@
 # Changelog
 
-Notable changes to Atria Application Studio. Newest first.
+Notable changes to Atrium Application Studio. Newest first.
 
 ## Unreleased
+
+### Changed
+- **Renamed to Atrium Application Studio**, from the Atria name used earlier the same day. Title, header, onboarding, backup filename, restore error and docs. The backup file's internal key is still `application-studio`, so every backup ever exported still restores. ([#10](https://github.com/dixon-l1/application-studio/pull/10))
 
 ### Added
 - **Memory across job descriptions.** Every match now records the posting's terms, the vertical it was written as, and the gaps Claude reported, in a `jdmemory` document private to each user and capped at the last 40 jobs. The Bullet bank tab shows which requirements keep coming up *and your bank cannot already answer* — anything your bullets already cover is filtered out — with a count of the postings each appeared in. "Draft bullets for these" asks Claude for draft bullets that fit roles you actually held, with every number left as a `[bracketed placeholder]` because only you know them. Nothing enters the bank until you accept it: each draft is editable, with its own role and skill, an Add to bank and a Discard, and a count on the Bullet bank nav link while any are waiting. ([#9](https://github.com/dixon-l1/application-studio/pull/9))
