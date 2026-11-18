@@ -468,7 +468,7 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
       </div>
       <div class="card stack"><div class="h">Tip</div><div class="small muted">Got a new win? Use Add new experience to turn rough notes into strong bullets. Every number you add makes a bullet stronger.</div></div>
     </aside>
-    <div class="stack"><div class="card stack" id="x-card"></div><div class="blist" id="b-list"></div></div>
+    <div class="stack"><div class="card stack" id="m-card"></div><div class="card stack" id="x-card"></div><div class="blist" id="b-list"></div></div>
   </div>
 </section>
 
@@ -593,6 +593,9 @@ let deletedIds = [];
 function mergeDefaults(){ const have = new Set(bank.map(b => b.id)); for (const d of DEFAULT_BULLETS) if (!have.has(d.id) && !deletedIds.includes(d.id)) { const i = bank.map(b => b.role).lastIndexOf(d.role); bank.splice(i + 1, 0, clone(d)); } }
 let questions = [];
 let resumes = [];
+// What the postings keep asking for, across jobs. Private to this user like the rest.
+let jdMemory = {jobs:[], terms:{}, proposals:[], dismissed:[]};
+function normMemory(x){ return Object.assign({jobs:[], terms:{}, proposals:[], dismissed:[]}, x || {}); }
 let work = freshWork();
 let drafts = [];
 let bankFilter = {q:"", role:"all", skill:null, needs:false, alts:true};
@@ -645,6 +648,7 @@ function loadLocal(){
   try { const b = JSON.parse(localStorage.getItem("as1.bank") || "null"); if (Array.isArray(b) && b.length) { bank = b; mergeDefaults(); } } catch (e) {}
   try { const q = JSON.parse(localStorage.getItem("as1.answers") || "null"); if (Array.isArray(q) && q.length) questions = q; } catch (e) {}
   try { const r = JSON.parse(localStorage.getItem("as1.resumes") || "null"); if (Array.isArray(r)) resumes = r; } catch (e) {}
+  try { const x = JSON.parse(localStorage.getItem("as1.jdmemory") || "null"); if (x) jdMemory = normMemory(x); } catch (e) {}
 }
 async function initDb(){
   const C = window.claude;
@@ -657,7 +661,7 @@ async function initDb(){
   col = db.collection("data/users/" + uid);
   const timer = setTimeout(() => setStatus("local", "Can't reach your saved work yet; showing the default bank"), 10000);
   try {
-    const [b, a, r, m, ls, lt, tk, ro, pr] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile"].map(k => col.doc(k).get()));
+    const [b, a, r, m, ls, lt, tk, ro, pr, jm] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile","jdmemory"].map(k => col.doc(k).get()));
     // A missing profile doc used to return here, which stranded a user's bank, roles and
     // tracker in their account and showed them an empty app. Load whatever is there.
     if (pr.exists) applyProfileDoc(pr.data().data);
@@ -671,6 +675,7 @@ async function initDb(){
     if (b.exists && Array.isArray(b.data().data)) { bank = b.data().data; mergeDefaults(); }
     if (a.exists && Array.isArray(a.data().data)) questions = a.data().data;
     if (r.exists && Array.isArray(r.data().data)) resumes = r.data().data;
+    if (jm.exists && jm.data().data) jdMemory = normMemory(jm.data().data);
     if (!pr.exists && (ROLES.length || bank.length)) SETTINGS.onboarded = true;
     setStatus("ok", "Saved to your account");
   } catch (e) {
@@ -763,6 +768,7 @@ function quickMatch(){
   if (!jd) { showMsg("t-msg", "Paste a job description first.", true); return; }
   { const {company, title, ...rest} = computeQuick({jd, allowGaps:work.allowGaps}); Object.assign(work, rest); }
   const tv = commitTailorVersion();
+  recordJob(work);
   saveWorkLocal(); showMsg("t-msg", "Picked by skill and keyword overlap. Claude matching reads the job more closely and can suggest wording." + trackNote(tv), false); renderTailor();
 }
 function matchPrompt(job){
@@ -836,6 +842,7 @@ async function aiMatch(){
     if (!work.title && res.title) work.title = res.title;
     const {company, title, ...rest} = res; Object.assign(work, rest);
     const tv = commitTailorVersion();
+    recordJob(work);
     saveWorkLocal();
     showMsg("t-msg", (Object.keys(res.suggestions || {}).length ? "Done. " + Object.keys(res.suggestions).length + " bullet" + (Object.keys(res.suggestions).length > 1 ? "s have" : " has") + " suggested wording for this job: accept with \u2713 or keep yours with \u2715. Nothing changed in your bank." : "Done. Hover any bullet to swap, reorder or remove it.") + trackNote(tv), false);
     renderTailor();
@@ -996,6 +1003,118 @@ function candidateList(role, idx){
   return opts.map(b => '<button class="opt" data-act="pick" data-role="' + role + '" data-i="' + idx + '" data-id="' + b.id + '"><span class="mt"><span class="mono">' + b.id + '</span><span class="chip"><span class="sw" style="background:' + (SKILL_COLOR[b.skill] || "#888") + '"></span>' + esc(b.skill) + "</span>" + (b.alt && altsUsed.has(b.alt) ? '<span class="small muted">replaces its other version</span>' : "") + "</span>" + markGaps(effText(b)) + "</button>").join("");
 }
 
+/* ---------------- What the job descriptions keep asking for ---------------- */
+const MEM_JOBS = 40, MEM_MIN = 3;
+const memKey = t => String(t || "").toLowerCase().replace(/\s+/g, " ").trim();
+// A term counts as covered if the bank already says it somewhere.
+function bankCovers(term){
+  const t = memKey(term); if (!t) return true;
+  return bank.some(b => (b.text + " " + (b.fallback || "") + " " + b.skill + " " + (b.tags || []).join(" ")).toLowerCase().includes(t));
+}
+function recordJob(w){
+  const terms = [].concat(w.keywords || [], w.gaps || []);
+  if (!terms.length) return;
+  const at = Date.now();
+  const gaps = new Set((w.gaps || []).map(memKey));
+  jdMemory.jobs.unshift({at, company:w.company || "", title:w.title || "", field:activeField(w), terms:terms.map(memKey).filter(Boolean).slice(0, 30)});
+  jdMemory.jobs = jdMemory.jobs.slice(0, MEM_JOBS);
+  const once = new Map();                       // count each term once per posting, not once per mention
+  for (const raw of terms) { const k = memKey(raw); if (k && k.length >= 3 && !once.has(k)) once.set(k, String(raw).trim()); }
+  for (const [k, label] of once) {
+    const e = jdMemory.terms[k] || (jdMemory.terms[k] = {n:0, gap:0, last:0, label});
+    e.n++; e.last = at; if (gaps.has(k)) e.gap++;
+  }
+  persist("jdmemory", jdMemory);
+}
+// Terms asked for often enough, that the bank still cannot answer.
+function memoryTerms(){
+  const dismissed = new Set((jdMemory.dismissed || []).map(memKey));
+  const seen = jdMemory.jobs.length;
+  return Object.entries(jdMemory.terms)
+    .filter(([k, e]) => e.n >= MEM_MIN && !dismissed.has(k) && !bankCovers(k))
+    .map(([k, e]) => ({term:k, label:e.label || k, n:e.n, gap:e.gap, of:seen}))
+    .sort((a, b) => (b.gap - a.gap) || (b.n - a.n))
+    .slice(0, 12);
+}
+const pendingProposals = () => (jdMemory.proposals || []).filter(p => p.status === "new");
+function renderMemory(){
+  const el = $("m-card"); if (!el) return;
+  const terms = memoryTerms(); const props = pendingProposals();
+  if (!jdMemory.jobs.length) {
+    el.innerHTML = '<div class="h">What your job descriptions keep asking for</div><div class="small muted">Match a few jobs on the Tailor tab and this fills in: the words and requirements that keep coming up, and whether your bank can answer them.</div>';
+    return;
+  }
+  let h = '<div class="row" style="justify-content:space-between;align-items:flex-start"><div><div class="h">What your job descriptions keep asking for</div><div class="small muted" style="margin-top:4px">From your last ' + jdMemory.jobs.length + ' matched job' + (jdMemory.jobs.length === 1 ? "" : "s") + '. Only terms your bank cannot already answer are listed.</div></div>' +
+    (terms.length && sample ? '<button class="btn sm primary" data-mem="draft">Draft bullets for these</button>' : "") + "</div>";
+  if (!terms.length) h += '<div class="small muted">Nothing recurring that your bank misses. Match more jobs and check back.</div>';
+  else h += '<div class="row">' + terms.map(t => '<span class="chip' + (t.gap ? " miss" : "") + '" title="' + esc("Seen in " + t.n + " of your last " + t.of + " postings" + (t.gap ? "; " + t.gap + " flagged it as a gap in your bank" : "")) + '">' + esc(t.label) + ' <b style="font-weight:600">' + t.n + "</b><button class=\"btn sm ghost\" style=\"padding:0 4px\" data-mem=\"skip\" data-term=\"" + esc(t.term) + '" aria-label="Ignore this term">&times;</button></span>').join("") + "</div>";
+  if (props.length) {
+    h += '<div class="stack" style="gap:8px;border-top:1px solid var(--line);padding-top:12px"><div class="h" style="font-size:12px">' + props.length + " suggested bullet" + (props.length === 1 ? "" : "s") + ' waiting for you</div>' +
+      '<div class="small muted">Nothing enters your bank until you accept it. Numbers are left as [brackets] because only you know them.</div>';
+    h += props.map(p => '<div class="bul' + (hasGap(p.text) ? " needs" : "") + '" style="grid-template-columns:1fr"><div class="stack" style="gap:6px">' +
+      '<div class="small muted">Covers: ' + esc(p.covers || "") + "</div>" +
+      '<textarea data-mem="text" data-id="' + p.id + '" rows="2">' + esc(p.text) + "</textarea>" +
+      '<div class="row" style="gap:6px"><select data-mem="role" data-id="' + p.id + '" style="width:auto">' + ROLES.map(r => '<option value="' + r.id + '"' + (p.role === r.id ? " selected" : "") + ">" + esc(r.company) + "</option>").join("") + "</select>" +
+      '<select data-mem="skill" data-id="' + p.id + '" style="width:auto">' + skillNames().map(n => "<option" + (n === p.skill ? " selected" : "") + ">" + esc(n) + "</option>").join("") + "</select>" +
+      '<span style="flex:1"></span><button class="btn sm primary" data-mem="accept" data-id="' + p.id + '">Add to bank</button><button class="btn sm ghost" data-mem="reject" data-id="' + p.id + '">Discard</button></div>' +
+      "</div></div>").join("");
+    h += "</div>";
+  }
+  h += '<div id="m-msg" class="note" hidden></div>';
+  el.innerHTML = h;
+}
+function navBadge(){
+  const a = document.querySelector('nav a[data-view="bank"]'); if (!a) return;
+  const n = pendingProposals().length;
+  a.textContent = "Bullet bank" + (n ? " (" + n + ")" : "");
+}
+let memAbort = null;
+async function draftFromMemory(){
+  const terms = memoryTerms(); if (!terms.length || !sample) return;
+  const el = $("m-msg"); if (el) { el.hidden = false; el.className = "note"; el.innerHTML = '<span class="spin" aria-hidden="true"></span> Claude is drafting bullets for what keeps coming up…'; }
+  memAbort = new AbortController();
+  const F = FIELDS[0] || FIELD_KEYS[0];
+  const prompt = `You are an expert ${fieldLabel(F)} resume writer. These requirements keep appearing in the job descriptions this candidate is applying to, and their bullet bank has nothing that answers them.
+
+Recurring requirements:
+${terms.map(t => "- " + t.label + " (seen in " + t.n + " of the last " + t.of + " postings)").join("\n")}
+
+Their roles (use the id):
+${JSON.stringify(ROLES.map(r => ({id:r.id, company:r.company, title:r.title, dates:r.dates})))}
+
+Their existing bullets, so you do not repeat one:
+${bank.map(b => b.id + " [" + b.role + "]: " + b.text).join("\n")}
+
+Their stories:
+${STORIES.map(x => x[1] + ": " + x[2]).join("\n") || "(none)"}
+
+Write at most 6 draft bullets, one per requirement that plausibly fits a role they actually held.
+
+Hard rules:
+- You do NOT know their numbers. Every metric must be a [bracketed placeholder] such as [N systems] or [X%]. Never invent a number, customer, tool or employer.
+- Only propose a bullet if their roles or stories make it plausible that they did this work. Skip a requirement rather than inventing experience.
+- Each bullet names the work and leaves the evidence to them.
+- "covers": the requirement it answers. "role": a role id from the list. "skill": exactly one of: ${skillNames(F).join(" | ")}.
+${fieldRulesText(F)}
+
+Return only JSON: {"bullets":[{"text":"","covers":"","role":"","skill":""}]}`;
+  try {
+    const r = await askJSON(prompt, memAbort.signal);
+    const roleIds = new Set(ROLES.map(x => x.id)); const names = skillNames();
+    const made = (r.bullets || []).filter(b => b && b.text).slice(0, 6).map((b, i) => ({
+      id:"m" + Date.now() + i, text:String(b.text).trim(), covers:String(b.covers || ""),
+      role:roleIds.has(b.role) ? b.role : (ROLES[0] || {}).id, skill:names.includes(b.skill) ? b.skill : names[0] || "General",
+      at:Date.now(), status:"new"
+    }));
+    jdMemory.proposals = pendingProposals().concat(made).slice(0, 12);
+    persist("jdmemory", jdMemory);
+    renderMemory(); navBadge();
+    const m = $("m-msg"); if (m) { m.hidden = !made.length; m.className = "note"; m.textContent = made.length ? "" : "Claude did not find anything your roles support. Nothing was added."; }
+  } catch (e) {
+    const m = $("m-msg"); if (m) { m.hidden = false; m.className = "note warn"; m.textContent = sampleErrText(e); }
+  } finally { memAbort = null; }
+}
+
 /* ---------------- Render: bank ---------------- */
 function renderBank(){
   const sel = $("b-role"); if (bankFilter.role !== "all" && !ROLES.some(r => r.id === bankFilter.role)) bankFilter.role = "all"; sel.innerHTML = '<option value="all">All roles</option>' + ROLES.map(r => '<option value="' + r.id + '">' + esc(r.company) + "</option>").join("");
@@ -1144,9 +1263,10 @@ function route(){
   if (view === "letter") renderLetter();
   if (view === "tracker") renderTracker();
   if (view === "guide") renderGuide();
+  if (view === "bank") { renderMemory(); navBadge(); }
 }
 window.addEventListener("hashchange", route);
-function renderAll(){ renderTailor(); renderBank(); renderAnswers(); renderBulk(); renderLetter(); renderTracker(); renderImport(); renderGuide(); renderBrand(); }
+function renderAll(){ renderTailor(); renderMemory(); navBadge(); renderBank(); renderAnswers(); renderBulk(); renderLetter(); renderTracker(); renderImport(); renderGuide(); renderBrand(); }
 
 let jdTimer = null;
 $("t-company").addEventListener("input", e => { work.company = e.target.value; saveWorkLocal(); });
@@ -1195,6 +1315,26 @@ $("pop").addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closePop(); });
 document.addEventListener("click", e => { if (!$("pop").hidden && !e.target.closest("#pop") && !e.target.closest("[data-act=swap],[data-act=add]")) closePop(); });
+
+$("m-card").addEventListener("click", async e => {
+  const b = e.target.closest("[data-mem]"); if (!b) return; const act = b.dataset.mem;
+  const p = jdMemory.proposals.find(x => x.id === b.dataset.id);
+  if (act === "draft") { await draftFromMemory(); return; }
+  if (act === "skip") { (jdMemory.dismissed = jdMemory.dismissed || []).push(b.dataset.term); persist("jdmemory", jdMemory); renderMemory(); return; }
+  if (!p) return;
+  if (act === "reject") { p.status = "rejected"; persist("jdmemory", jdMemory); renderMemory(); navBadge(); return; }
+  if (act === "accept") {
+    const text = (document.querySelector('[data-mem="text"][data-id="' + p.id + '"]') || {}).value || p.text;
+    const role = (document.querySelector('[data-mem="role"][data-id="' + p.id + '"]') || {}).value || p.role;
+    const skill = (document.querySelector('[data-mem="skill"][data-id="' + p.id + '"]') || {}).value || p.skill;
+    if (!ROLES.some(r => r.id === role)) return;
+    const nb = {id:nextId(role), role, skill, text:String(text).trim(), alt:null, fallback:null, tags:[]};
+    const last = bank.map(x => x.role).lastIndexOf(role); bank.splice(last < 0 ? bank.length : last + 1, 0, nb);
+    p.status = "accepted"; persist("bank", bank); persist("jdmemory", jdMemory);
+    renderMemory(); navBadge(); renderBank(); renderTailor();
+  }
+});
+$("m-card").addEventListener("input", e => { const t = e.target.closest('[data-mem="text"]'); if (!t) return; const p = jdMemory.proposals.find(x => x.id === t.dataset.id); if (p) p.text = t.value; });
 
 /* bank events */
 $("b-q").addEventListener("input", e => { bankFilter.q = e.target.value; renderBank(); });
