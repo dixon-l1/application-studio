@@ -134,7 +134,7 @@ button.chip{cursor:pointer}
 /* bank */
 .bankgrid{display:grid;grid-template-columns:290px 1fr;gap:20px;align-items:start}
 @media (max-width:900px){.bankgrid{grid-template-columns:1fr}}
-.side{position:sticky;top:70px}
+.side{position:sticky;top:70px;max-height:calc(100vh - 86px);overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
 .blist{display:flex;flex-direction:column;gap:18px}
 .role h3{font-size:15px;font-weight:600;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .role h3 span{font-weight:400;color:var(--muted);font-size:13px}
@@ -304,7 +304,10 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
         <label class="f">Job link (optional, kept with the saved version)<input type="text" id="t-link" placeholder="https://"></label>
         <label class="f">Job description<textarea id="t-jd" rows="9" placeholder="Paste the full job description here."></textarea></label>
         <div class="small muted">This page can't open other websites, so paste the job description itself. The link is kept with the saved version and your tracker.</div>
-        <label class="row small"><input type="checkbox" id="t-gaps"> Allow bullets that still need a number</label>
+        <div class="row" style="flex-wrap:nowrap;align-items:flex-end;gap:12px">
+          <label class="f" style="flex:1">Write this resume as<select id="t-field"></select></label>
+          <label class="row small" style="padding-bottom:8px"><input type="checkbox" id="t-gaps"> Allow bullets that still need a number</label>
+        </div>
         <div class="row">
           <button class="btn primary" id="t-ai" hidden>Match with Claude</button>
           <button class="btn" id="t-quick">Quick match</button>
@@ -531,9 +534,27 @@ function rebuildSkills(){
   SKILL_COLOR = Object.fromEntries(SKILLS);
   SKILL_KW = Object.fromEntries([...seen.values()].map(s => [s.name, (s.keywords || []).map(k => String(k).toLowerCase())]));
 }
-const skillNames = () => { const use = FIELDS.length ? FIELDS : FIELD_KEYS; const out = []; use.forEach(f => ((FIELD_SPECS[f] || {}).skills || []).forEach(s => { if (!out.includes(s.name)) out.push(s.name); })); return out.length ? out : SKILLS.map(s => s[0]); };
+const skillNames = (only) => { const use = only ? [only] : (FIELDS.length ? FIELDS : FIELD_KEYS); const out = []; use.forEach(f => ((FIELD_SPECS[f] || {}).skills || []).forEach(s => { if (!out.includes(s.name)) out.push(s.name); })); return out.length ? out : SKILLS.map(s => s[0]); };
 const skillListByField = () => (FIELDS.length ? FIELDS : FIELD_KEYS).map(f => fieldLabel(f) + " (" + f + "): " + ((FIELD_SPECS[f] || {}).skills || []).map(s => s.name).join(" | ")).join("\n");
-const fieldRulesText = () => (FIELDS.length ? FIELDS : FIELD_KEYS).map(f => "## " + fieldLabel(f) + "\n" + ((FIELD_SPECS[f] || {}).prompt_rules || "")).join("\n\n");
+const fieldRulesText = (only) => (only ? [only] : (FIELDS.length ? FIELDS : FIELD_KEYS)).map(f => "## " + fieldLabel(f) + "\n" + ((FIELD_SPECS[f] || {}).prompt_rules || "")).join("\n\n");
+// Which vertical is THIS job? Scoring the posting against each field's own skill keywords.
+function fieldScores(jd){
+  const t = " " + String(jd || "").toLowerCase() + " "; const out = {};
+  for (const f of FIELD_KEYS) {
+    const kws = ((FIELD_SPECS[f] || {}).skills || []).reduce((a, x) => a.concat(x.keywords || []), []);
+    out[f] = kws.reduce((n, w) => { const ww = String(w).toLowerCase(); return ww.length > 2 ? n + (t.split(ww).length - 1) : n; }, 0);
+  }
+  return out;
+}
+function detectField(jd){
+  const use = (FIELDS.length ? FIELDS : FIELD_KEYS).filter(f => FIELD_SPECS[f]);
+  if (use.length < 2) return use[0] || FIELD_KEYS[0];
+  const sc = fieldScores(jd); let best = use[0], bv = -1;
+  for (const f of use) if ((sc[f] || 0) > bv) { bv = sc[f] || 0; best = f; }
+  return best;
+}
+// The vertical every prompt for this job is written in: the user's pick, else the detected one.
+const activeField = (w) => { w = w || work; return (w.field && FIELD_SPECS[w.field]) ? w.field : detectField(w.jd); };
 const DEFAULT_BULLETS = [];
 const GENERIC_QUESTIONS = [
   {cat:"Behavioral & other", q:"Tell us about yourself."},
@@ -577,7 +598,7 @@ let checkedQ = new Set();
 let jsPDFLib = null;
 
 function freshWork(){
-  return {company:"", title:"", link:"", jd:"", allowGaps:false, summary:false, picks:{}, overrides:{}, positioning:"", keywords:[], covered:[], gaps:[], rationale:{}, by:null};
+  return {company:"", title:"", link:"", jd:"", field:"", allowGaps:false, summary:false, picks:{}, overrides:{}, positioning:"", keywords:[], covered:[], gaps:[], rationale:{}, by:null};
 }
 const byId = id => bank.find(b => b.id === id);
 const hasGap = t => /\[[^\]]*\]/.test(t || "");
@@ -712,7 +733,8 @@ function fitToPage(picks, overrides){
 function computeQuick(job){
   const jd = job.jd; const allow = !!job.allowGaps;
   const ss = skillScores(jd); const words = new Set(jd.toLowerCase().match(/[a-z0-9&\/+-]{4,}/g) || []);
-  const score = b => { const tx = effText(b).toLowerCase(); let o = 0; (tx.match(/[a-z0-9&\/+-]{4,}/g) || []).forEach(w => { if (words.has(w)) o++; }); return (ss[b.skill] || 0) * 3 + o + (b.tags || []).filter(x => jd.toLowerCase().includes(x.toLowerCase())).length * 2; };
+  const inField = new Set(skillNames(activeField(job)));
+  const score = b => { const tx = effText(b).toLowerCase(); let o = 0; (tx.match(/[a-z0-9&\/+-]{4,}/g) || []).forEach(w => { if (words.has(w)) o++; }); return (ss[b.skill] || 0) * (inField.has(b.skill) ? 3 : 1) + (b.tags || []).filter(x => jd.toLowerCase().includes(x.toLowerCase())).length * 2; };
   const picks = {}; const DP = defaultPicks();
   for (const r of ROLES) {
     const base = new Set(DP[r.id] || []);
@@ -743,7 +765,8 @@ function matchPrompt(job){
   const bankForAI = bank.map(b => ({id:b.id, role:b.role, field:b.field || "", skill:b.skill, alt_group:b.alt, text:effText(b), needs_number:!usable(b)}));
   const counts = ROLES.map(r => r.id + " (" + r.company + "): " + ((r.target || 2) <= 1 ? "0-1" : ((r.target || 2) - 1) + "-" + (r.target || 2))).join("; ");
   const pickTpl = JSON.stringify(Object.fromEntries(ROLES.map(r => [r.id, []])));
-  return `You are tailoring a one-page resume to a job description. The candidate applies to ${fieldLabels()} roles; use the field guidance that fits this job. Choose bullets ONLY from the bank below, by id. Never invent facts, numbers, tools or employers.
+  const F = activeField(job); const FL = fieldLabel(F);
+  return `You are an expert ${FL} resume writer. This job is a ${FL} role, so write it the way ${FL} reviewers read: their verbs, their metrics, their vocabulary. Do not borrow another field's framing. Choose bullets ONLY from the bank below, by id. Never invent facts, numbers, tools or employers.
 
 Rules:
 - Bullets per role: ${counts}. Total about 16-18 so it fits one page; trim older roles first if needed.
@@ -751,6 +774,8 @@ Rules:
 - ${job.allowGaps ? "Bullets with needs_number=true are allowed but prefer complete ones." : "Do not choose bullets with needs_number=true."}
 - Order each role's bullets strongest match first. Lead each role with the bullet that best proves what this job asks for most.
 - Cover the job's most important skills across the resume; avoid repeating the same skill when another bullet covers a missing one.
+- Stay in ${FL} language. Keep the concrete verbs this field expects and do not soften them into another field's wording. Only describe work in another field's terms when the bullet itself is about that work.
+- Skills that count for this job: ${skillNames(F).join(" | ")}. Prefer bullets that prove these.
 - "rewrites": up to 6 light edits that mirror the job's vocabulary (e.g. "customers" vs "users", "partners" vs "integrations"). Keep every fact, number and claim identical. Do not add brackets. Only for chosen bullets. Skip if no real improvement.
 - "positioning": one line under 22 words describing the candidate for this job, using only facts in the bank.
 - "keywords": 8-15 short terms that matter most in the job description, lowercase.
@@ -758,8 +783,8 @@ Rules:
 - "why": for each chosen id, under 12 words on why it was picked.
 - "company" and "title": the hiring company's name and the job title as written in the job description ("" if not stated).
 
-Field guidance:
-${fieldRulesText()}
+Field guidance (${FL} only):
+${fieldRulesText(F)}
 
 Job: ${job.title || "(title not given)"} at ${job.company || "(company not given)"}
 Job description:
@@ -878,11 +903,15 @@ function renderTailor(){
   const sv = (id, v) => { const el = $(id); if (el.value !== v) el.value = v; };
   sv("t-company", work.company); sv("t-title", work.title); sv("t-jd", work.jd); sv("t-link", work.link || "");
   $("t-gaps").checked = work.allowGaps; $("t-sum").checked = work.summary;
+  { const use = (FIELDS.length ? FIELDS : FIELD_KEYS).filter(f => FIELD_SPECS[f]); const det = detectField(work.jd);
+    $("t-field").innerHTML = '<option value="">Auto' + (use.length > 1 ? " \u2014 " + esc(fieldLabel(det)) : "") + "</option>" +
+      use.map(f => '<option value="' + f + '"' + (work.field === f ? " selected" : "") + ">" + esc(fieldLabel(f)) + "</option>").join("");
+    $("t-field").value = work.field || ""; }
   // insight card
   const picked = Object.values(work.picks).flat().map(byId).filter(Boolean);
   const ss = work.jd.trim() ? skillScores(work.jd) : null;
   const max = ss ? Math.max(1, ...Object.values(ss)) : 1;
-  let h = '<div class="h">Fit to this job</div>';
+  let h = '<div class="h">Fit to this job</div><div class="small muted">Written as <b>' + esc(fieldLabel(activeField())) + '</b>' + (work.field ? " (your pick)" : " (detected from the posting)") + "</div>";
   if (work.positioning) h += '<div><div class="small muted">Positioning line</div><div style="font-weight:500">' + esc(work.positioning) + '</div><div class="small muted" style="margin-top:4px">Turn on “Summary line” above the resume to use it.</div></div>';
   if (work.keywords && work.keywords.length) {
     const cov = new Set((work.covered || []).map(x => x.toLowerCase()));
@@ -1116,6 +1145,7 @@ $("t-title").addEventListener("input", e => { work.title = e.target.value; saveW
 $("t-link").addEventListener("input", e => { work.link = e.target.value.trim(); saveWorkLocal(); });
 $("t-jd").addEventListener("input", e => { work.jd = e.target.value; saveWorkLocal(); clearTimeout(jdTimer); jdTimer = setTimeout(renderTailor, 600); });
 $("t-gaps").addEventListener("change", e => { work.allowGaps = e.target.checked; saveWorkLocal(); });
+$("t-field").addEventListener("change", e => { work.field = e.target.value; saveWorkLocal(); renderTailor(); });
 $("t-sum").addEventListener("change", e => { work.summary = e.target.checked; saveWorkLocal(); if (work.summary && !work.positioning) showMsg("t-msg", "Run Match with Claude to get a positioning line for the summary.", false); renderPaper(); renderFit(); });
 $("t-quick").addEventListener("click", quickMatch);
 $("t-ai").addEventListener("click", aiMatch);
