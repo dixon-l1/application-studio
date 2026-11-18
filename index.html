@@ -599,7 +599,11 @@ let questions = [];
 let resumes = [];
 // What the postings keep asking for, across jobs. Private to this user like the rest.
 let jdMemory = {jobs:[], terms:{}, proposals:[], dismissed:[]};
-function normMemory(x){ return Object.assign({jobs:[], terms:{}, proposals:[], dismissed:[]}, x || {}); }
+function normMemory(x){
+  x = thaw(x) || {};
+  return {jobs:Array.isArray(x.jobs) ? x.jobs : [], terms:(x.terms && typeof x.terms === "object") ? x.terms : {},
+          proposals:Array.isArray(x.proposals) ? x.proposals : [], dismissed:Array.isArray(x.dismissed) ? x.dismissed : []};
+}
 let work = freshWork();
 let drafts = [];
 let bankFilter = {q:"", role:"all", skill:null, needs:false, alts:true};
@@ -624,6 +628,10 @@ function saveWorkLocal(){ try { localStorage.setItem("as1.work", JSON.stringify(
 
 /* ---------------- Persistence ---------------- */
 let col = null; const writing = {}; const pending = {};
+// Documents the database hands back can be non-extensible. Everything below edits its
+// state in place (bank.splice, tracker.unshift, jdMemory.jobs.unshift), so take an owned
+// copy on the way in rather than discovering the freeze at the first edit.
+function thaw(x){ try { return (x && typeof x === "object") ? JSON.parse(JSON.stringify(x)) : x; } catch (e) { return x; } }
 function setStatus(kind, text){ $("sdot").className = "dot " + kind; $("stext").textContent = text; }
 async function persist(key, data){
   try { localStorage.setItem("as1." + key, JSON.stringify(data)); } catch (e) {}
@@ -668,17 +676,17 @@ async function initDb(){
     const [b, a, r, m, ls, lt, tk, ro, pr, jm] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile","jdmemory"].map(k => col.doc(k).get()));
     // A missing profile doc used to return here, which stranded a user's bank, roles and
     // tracker in their account and showed them an empty app. Load whatever is there.
-    if (pr.exists) applyProfileDoc(pr.data().data);
+    if (pr.exists) applyProfileDoc(thaw(pr.data().data));
     else loadLocal();
-    if (ro.exists && Array.isArray(ro.data().data) && ro.data().data.length) ROLES = ro.data().data;
-    if (tk.exists && Array.isArray(tk.data().data)) { tracker = tk.data().data; trackerFound = true; }
-    if (ls.exists && ls.data().data) letterStyle = Object.assign({samples:[], guide:""}, ls.data().data);
-    if (lt.exists && Array.isArray(lt.data().data)) letters = lt.data().data;
+    if (ro.exists && Array.isArray(ro.data().data) && ro.data().data.length) ROLES = thaw(ro.data().data);
+    if (tk.exists && Array.isArray(tk.data().data)) { tracker = thaw(tk.data().data); trackerFound = true; }
+    if (ls.exists && ls.data().data) letterStyle = Object.assign({samples:[], guide:""}, thaw(ls.data().data));
+    if (lt.exists && Array.isArray(lt.data().data)) letters = thaw(lt.data().data);
     clearTimeout(timer);
-    if (m.exists && m.data().data && Array.isArray(m.data().data.deleted)) deletedIds = m.data().data.deleted;
-    if (b.exists && Array.isArray(b.data().data)) { bank = b.data().data; mergeDefaults(); }
-    if (a.exists && Array.isArray(a.data().data)) questions = a.data().data;
-    if (r.exists && Array.isArray(r.data().data)) resumes = r.data().data;
+    if (m.exists && m.data().data && Array.isArray(m.data().data.deleted)) deletedIds = thaw(m.data().data.deleted);
+    if (b.exists && Array.isArray(b.data().data)) { bank = thaw(b.data().data); mergeDefaults(); }
+    if (a.exists && Array.isArray(a.data().data)) questions = thaw(a.data().data);
+    if (r.exists && Array.isArray(r.data().data)) resumes = thaw(r.data().data);
     if (jm.exists && jm.data().data) jdMemory = normMemory(jm.data().data);
     if (!pr.exists && (ROLES.length || bank.length)) SETTINGS.onboarded = true;
     setStatus("ok", "Saved to your account");
@@ -1051,6 +1059,9 @@ function bankCovers(term){
   return bank.some(b => (b.text + " " + (b.fallback || "") + " " + b.skill + " " + (b.tags || []).join(" ")).toLowerCase().includes(t));
 }
 function recordJob(w){
+  try { recordJobInner(w); } catch (e) { try { console.warn("Application Studio: could not record this job in memory.", e); } catch (x) {} }
+}
+function recordJobInner(w){
   const terms = [].concat(w.keywords || [], w.gaps || []);
   if (!terms.length) return;
   const at = Date.now();
