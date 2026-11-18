@@ -702,17 +702,29 @@ let sample = null, downloads = null;
   try { renderLetter(); renderBulk(); renderImport(); if (!$("ob").hidden) renderOb(); } catch (e) {}
   if (!sample) showMsg("t-msg", "Claude matching isn't available in this view. Quick match still picks bullets by skill and keyword.", false);
 })();
-async function askJSON(prompt, signal){
+async function askJSON(prompt, signal, retried){
   let out;
-  if (typeof sample.json === "function") {
-    out = await sample.json(prompt, {modelTier:"default", signal});
-    if (typeof out === "string") out = parseLoose(out);
-  } else {
-    const r = await sample(prompt, {modelTier:"default", signal});
-    out = parseLoose(r.text);
+  try {
+    if (typeof sample.json === "function") {
+      out = await sample.json(prompt, {modelTier:"default", signal});
+      if (typeof out === "string") out = parseLoose(out);
+    } else {
+      const r = await sample(prompt, {modelTier:"default", signal});
+      out = parseLoose(r.text);
+    }
+  } catch (e) {
+    // A reply that will not parse is usually a one-off: truncated, or wrapped in prose.
+    // Ask once more for the JSON alone before giving up.
+    if (!retried && isParseError(e)) {
+      console.warn("Application Studio: reply did not parse, retrying once.", e);
+      return askJSON(prompt + "\n\nReturn the JSON object only. No preamble, no explanation, no code fences. Keep every string short.", signal, true);
+    }
+    throw e;
   }
+  if (!out || typeof out !== "object") { const e = new Error("empty reply"); e.code = "invalid_json"; throw e; }
   return out;
 }
+const isParseError = e => !!e && (e.name === "SyntaxError" || e.code === "invalid_json");
 function parseLoose(t){ const s = String(t); const i = s.indexOf("{"), j = s.lastIndexOf("}"); return JSON.parse(s.slice(i, j + 1)); }
 function showMsg(id, text, warn, busy){
   const el = $(id); if (!text) { el.hidden = true; return; }
@@ -830,8 +842,10 @@ function sampleErrText(e){
   if (e.name === "AbortError" || e.code === "cancelled") return "Cancelled.";
   if (e.code === "not_granted" || e.code === "sampling_disabled") return "Claude access wasn't granted. Quick match still works.";
   if (e.code === "rate_limited") return "Claude is busy or you've hit a usage limit. Wait a bit and try again.";
-  if (e.code === "invalid_json") return "Claude's answer couldn't be read. Try again.";
-  return "Claude couldn't finish. Try again, or use Quick match.";
+  if (isParseError(e)) return "Claude's answer came back incomplete, so it couldn't be read. Try again, or use Quick match.";
+  if (e.code === "quota_exceeded") return "You've hit your Claude usage limit. Quick match still works.";
+  try { console.error("Application Studio: Claude call failed.", e); } catch (x) {}
+  return "Claude couldn't finish: " + String((e && (e.message || e.code)) || "unknown error") + ". Try again, or use Quick match.";
 }
 let tAbort = null;
 async function aiMatch(){
