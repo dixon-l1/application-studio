@@ -22,7 +22,9 @@ The repo is public. Never commit a real person's resume content, phone, email, a
   - `FIELD_SPECS` is the field guides for pm, swe, bizops and data, inlined from `research/field-guides.json`. Each job is written by one vertical only: `detectField()` scores the posting against each field's keywords and `activeField()` prefers the user's pick from the Tailor tab, then the prompt carries that field's rules and skills alone.
   - `rebuildSkills()`, `fieldRulesText()`, `skillNames()`, `buildQuestions()` and `defaultPicks()` derive the rest.
 - **Persistence:** `persist(key, data)` writes `localStorage` first, then the db. `initDb()` and `loadLocal()` load it back.
-  - Keys: profile, roles, bank, answers, resumes, letters, letterstyle, tracker, bankmeta.
+  - Keys: profile, roles, bank, answers, resumes, letters, letterstyle, tracker, bankmeta, jdmemory.
+  - The storage runtime freezes what it is handed, so `persist` sends a copy and `initDb` copies what it reads (`thaw`). Everything here is edited in place somewhere, so never pass live state to `col.doc().set()` or assign a document straight to a module variable.
+  - `jdmemory` holds the last 40 matched postings' terms and gaps plus bullet proposals awaiting sign-off. Rebuild it rather than mutating it, and never let recording a job fail a match.
 - **Views** (hash routes): tailor, bulk, letter, bank, answers, tracker, guide.
 - **Onboarding overlay** (`#ob`), four steps:
   1. Pick fields.
