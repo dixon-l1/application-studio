@@ -20,18 +20,21 @@ The repo is public. Never commit a real person's resume content, phone, email, a
 ## Structure inside index.html
 - **Data layer:** `PROFILE`, `ROLES`, `FIELDS`, `SETTINGS`, `STORIES` and `FIELD_SPECS`.
   - `FIELD_SPECS` is the field guides for pm, swe, bizops and data, inlined from `research/field-guides.json`. Each job is written by one vertical only: `detectField()` scores the posting against each field's keywords and `activeField()` prefers the user's pick from the Tailor tab, then the prompt carries that field's rules and skills alone.
+  - Each vertical also carries an `expert`: a named person the prompts write as (PM: CPO of Notion; SWE: staff engineer at Meta; bizops: COO of Meta; data: lead data engineer at Meta). `fieldExpert()` reads it and `reviewRules(who)` is the final self-review pass appended to every prompt that produces a bullet - tailoring, gap drafting, notes and document import, and the onboarding bank build. Adding a prompt that writes bullets means appending `reviewRules` to it too.
   - `rebuildSkills()`, `fieldRulesText()`, `skillNames()`, `buildQuestions()` and `defaultPicks()` derive the rest.
 - **Persistence:** `persist(key, data)` writes `localStorage` first, then the db. `initDb()` and `loadLocal()` load it back.
   - Keys: profile, roles, bank, answers, resumes, letters, letterstyle, tracker, bankmeta, jdmemory.
   - The storage runtime freezes what it is handed, so `persist` sends a copy and `initDb` copies what it reads (`thaw`). Everything here is edited in place somewhere, so never pass live state to `col.doc().set()` or assign a document straight to a module variable.
   - `jdmemory` holds the last 40 matched postings' terms and gaps plus bullet proposals awaiting sign-off. Rebuild it rather than mutating it, and never let recording a job fail a match.
-- **Views** (hash routes): tailor, bulk, letter, bank, answers, tracker, guide.
+- **Views** (hash routes): tailor, bulk, letter, bank, answers, tracker, guide. The tailor tab is called **Single resume** in the interface; the route and the function names stay `tailor`.
+- **Colour:** sage green. `--accent`, `--accent-soft`, `--accent-ink` and `--hover`, defined three times (light, the dark media query, the dark attribute). The `.paper` rules use literal colours on purpose, because the page stays light in either theme - change both. `PALETTE` is the 18-hue wheel that colour-codes skills; it is data coding, not the interface, and is deliberately not sage.
 - **Onboarding overlay** (`#ob`), four steps:
   1. Pick fields.
   2. Upload resume, bullet bank and writing samples.
   3. Line-art animation of two Romans carrying benches, statues, vases and plants into an atrium while three Claude calls run: parse the resume, build the bank, and learn the writing style.
   4. The app opens.
 - **Profile and data modal** (`#pf`): edit education, sections and fields; backup, restore, start over.
+- **Bulk runs use Claude for every job**, falling back to `computeQuick` only when the capability is missing or refused; a job that fell back sets `j.quick` and says so on its card. The run button's label follows the same fact, so it never promises Claude when Claude is not there.
 - **Bullet rules everywhere:** never invent numbers, put a missing number in a `[bracket placeholder]` with a fallback version of the bullet, no em dashes, one skill per bullet.
 
 ## Testing
