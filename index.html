@@ -12,27 +12,27 @@
 <style>
 /* Layout idea: a workbench. Inputs and evidence on the left, the live one-page resume on the right, like a desk with a page under a lamp. */
 :root{
-  --bg:#eff1ec; --panel:#ffffff; --ink:#171c18; --muted:#5d6760; --line:#dbdfd8;
-  --accent:#3f5d45; --accent-soft:#e8eee6; --accent-ink:#2c4330; --hover:rgba(23,28,24,.07);
+  --bg:#f0f0f2; --panel:#ffffff; --ink:#1a181c; --muted:#605d64; --line:#dcdade;
+  --accent:#906D97; --accent-soft:#f0eaf2; --accent-ink:#523858; --hover:rgba(26,24,28,.07);
   --gap:#a8530c; --gap-soft:#fbecd9; --good:#1d7449; --good-soft:#e2f2e9;
   --yellow:#8a6400; --yellow-soft:#fbf1cc; --red:#b42318; --red-soft:#fde4e1;
-  --paper:#ffffff; --paper-ink:#111111; --shadow:0 1px 2px rgba(23,28,24,.06),0 8px 24px rgba(23,28,24,.08);
+  --paper:#ffffff; --paper-ink:#111111; --shadow:0 1px 2px rgba(26,24,28,.06),0 8px 24px rgba(26,24,28,.08);
   --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   --serif:"Tinos","Times New Roman",Times,serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f1310; --panel:#181d19; --ink:#e8ece7; --muted:#9ca69d; --line:#2c332d;
-  --accent:#a8c3a6; --accent-soft:#1e2b22; --accent-ink:#cfe3cd; --hover:rgba(232,236,231,.09);
+  --bg:#121114; --panel:#1a191c; --ink:#e9e8eb; --muted:#a09ea4; --line:#312f34;
+  --accent:#c3a3c9; --accent-soft:#2a1f2c; --accent-ink:#e2cfe6; --hover:rgba(233,232,235,.09);
   --gap:#f2a65a; --gap-soft:#3a2a17; --good:#6ccf9a; --good-soft:#163024;
   --yellow:#f3cf5b; --yellow-soft:#352b0e; --red:#ff8a80; --red-soft:#3d1a18;
   --paper:#fbfbf8; --paper-ink:#111111; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#0f1310; --panel:#181d19; --ink:#e8ece7; --muted:#9ca69d; --line:#2c332d;
-  --accent:#a8c3a6; --accent-soft:#1e2b22; --accent-ink:#cfe3cd; --hover:rgba(232,236,231,.09);
+  --bg:#121114; --panel:#1a191c; --ink:#e9e8eb; --muted:#a09ea4; --line:#312f34;
+  --accent:#c3a3c9; --accent-soft:#2a1f2c; --accent-ink:#e2cfe6; --hover:rgba(233,232,235,.09);
   --gap:#f2a65a; --gap-soft:#3a2a17; --good:#6ccf9a; --good-soft:#163024;
   --yellow:#f3cf5b; --yellow-soft:#352b0e; --red:#ff8a80; --red-soft:#3d1a18;
   --paper:#fbfbf8; --paper-ink:#111111; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
@@ -68,8 +68,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.45}
 .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:7px;padding:7px 12px;cursor:pointer;font-weight:500}
 .btn:hover{border-color:var(--muted)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-:root[data-theme="dark"] .btn.primary{color:#0f1310}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#0f1310}}
+:root[data-theme="dark"] .btn.primary{color:#121114}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#121114}}
 .btn.ghost{border-color:transparent;background:transparent;color:var(--muted)}
 .btn.ghost:hover{color:var(--ink);background:var(--bg)}
 .btn.sm{padding:3px 8px;font-size:12px}
@@ -120,20 +120,20 @@ button.chip{cursor:pointer}
 .paper ul{margin:0;padding:0;list-style:none}
 .paper li{position:relative;padding-left:18px;border-radius:3px}
 .paper li::before{content:"\2022";position:absolute;left:5px}
-.paper li:hover{background:#eef2ea}
-.paper li .ctl{position:absolute;right:-54px;top:-2px;display:none;flex-direction:row;gap:2px;font-family:var(--sans);background:#fff;border:1px solid #dbdfd8;border-radius:6px;padding:2px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.paper li:hover{background:#f3eef4}
+.paper li .ctl{position:absolute;right:-54px;top:-2px;display:none;flex-direction:row;gap:2px;font-family:var(--sans);background:#fff;border:1px solid #dcdade;border-radius:6px;padding:2px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .paper li:hover .ctl,.paper li:focus-within .ctl{display:flex}
 .paper li .ctl button{border:0;background:transparent;cursor:pointer;width:22px;height:22px;border-radius:4px;color:#444;font-size:13px;line-height:22px;padding:0}
-.paper li .ctl button:hover{background:#eef2ea;color:#2c4330}
-.paper .tw{font-family:var(--sans);font-size:10px;color:#3f5d45;background:#e8eee6;border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:1px;cursor:pointer;border:0}
-.paper .sug{font-family:var(--sans);font-size:11.5px;line-height:1.4;background:#eef2ea;border-left:2px solid #3f5d45;border-radius:4px;padding:6px 8px;margin:5px 0 7px 0;color:#2c4330;display:flex;gap:8px;align-items:flex-start}
+.paper li .ctl button:hover{background:#f3eef4;color:#523858}
+.paper .tw{font-family:var(--sans);font-size:10px;color:#523858;background:#f0eaf2;border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:1px;cursor:pointer;border:0}
+.paper .sug{font-family:var(--sans);font-size:11.5px;line-height:1.4;background:#f3eef4;border-left:2px solid #906D97;border-radius:4px;padding:6px 8px;margin:5px 0 7px 0;color:#523858;display:flex;gap:8px;align-items:flex-start}
 .paper .sug .sx{flex:1}
 .paper .sug .sl{font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:9.5px;display:block;opacity:.75}
-.paper .sug button{border:1px solid #ccd2c9;background:#fff;border-radius:4px;width:24px;height:24px;cursor:pointer;font-size:13px;line-height:1;padding:0;color:#1d7449;flex:none}
+.paper .sug button{border:1px solid #d1ced4;background:#fff;border-radius:4px;width:24px;height:24px;cursor:pointer;font-size:13px;line-height:1;padding:0;color:#1d7449;flex:none}
 .paper .sug button.no{color:#b42318}
-.paper .sug button:hover{border-color:#3f5d45}
-.paper .add{font-family:var(--sans);font-size:11px;color:#5d6760;background:transparent;border:1px dashed #ccd2c9;border-radius:5px;padding:1px 8px;margin:2px 0 0 18px;cursor:pointer}
-.paper .add:hover{color:#3f5d45;border-color:#3f5d45}
+.paper .sug button:hover{border-color:#906D97}
+.paper .add{font-family:var(--sans);font-size:11px;color:#605d64;background:transparent;border:1px dashed #d1ced4;border-radius:5px;padding:1px 8px;margin:2px 0 0 18px;cursor:pointer}
+.paper .add:hover{color:#523858;border-color:#906D97}
 .paper .gap{background:#fbecd9;color:#8a4307}
 .paper .edu2{padding-left:12px}
 @media (max-width:900px){.paper{transform-origin:top left}}
@@ -184,7 +184,7 @@ button.chip{cursor:pointer}
 .letter .ct{text-align:center;font-size:14px;margin-top:2px;padding-bottom:10px;border-bottom:1.1px solid #111}
 .letter .meta{margin:22px 0 14px;white-space:pre-line}
 .letter textarea{width:100%;min-height:640px;border:0;background:transparent;color:var(--paper-ink);font:inherit;line-height:1.45;resize:none;padding:0;outline:none}
-.letter textarea:focus-visible{outline:2px dashed #ccd2c9;outline-offset:6px}
+.letter textarea:focus-visible{outline:2px dashed #d1ced4;outline-offset:6px}
 .sample{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:7px}
 .drop{border:1.5px dashed var(--line);border-radius:9px;padding:14px;text-align:center;color:var(--muted);font-size:13px}
 .drop.over{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
@@ -234,7 +234,7 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
 .ob-steps{list-style:none;padding:0;margin:16px auto 0;max-width:340px;display:flex;flex-direction:column;gap:8px}
 .ob-steps li{display:flex;align-items:center;gap:10px;color:var(--muted)}
 .ob-steps li .ic{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex:none}
-.ob-steps li.run{color:var(--ink);font-weight:500}.ob-steps li.run .ic{border-color:var(--accent);color:var(--accent)}
+.ob-steps li.run{color:var(--ink);font-weight:500}.ob-steps li.run .ic{border-color:var(--accent);color:var(--accent-ink)}
 .ob-steps li.done{color:var(--ink)}.ob-steps li.done .ic{background:var(--good);border-color:var(--good);color:#fff}
 .ob-steps li.fail .ic{background:var(--red);border-color:var(--red);color:#fff}
 .scene svg{max-width:100%;height:auto;overflow:visible}
@@ -421,7 +421,7 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
       <div class="card stack">
         <div class="h">Your writing style</div>
         <div class="small muted">Upload cover letters you've written before. Claude copies their format, structure and voice, but never their facts.</div>
-        <label class="drop" id="l-drop" for="l-file">Drop files here or <span style="color:var(--accent);text-decoration:underline;cursor:pointer">choose files</span><br><span class="small">.docx, .pdf, .txt or .md</span></label>
+        <label class="drop" id="l-drop" for="l-file">Drop files here or <span style="color:var(--accent-ink);text-decoration:underline;cursor:pointer">choose files</span><br><span class="small">.docx, .pdf, .txt or .md</span></label>
         <input type="file" id="l-file" accept=".docx,.pdf,.txt,.md,text/plain" multiple class="sr">
         <details><summary class="small" style="cursor:pointer">Or paste a letter</summary>
           <div class="stack" style="margin-top:8px"><textarea id="l-paste" rows="5" placeholder="Paste the full text of a past cover letter."></textarea><button class="btn sm" id="l-addpaste">Add pasted letter</button></div>
@@ -1936,7 +1936,7 @@ function renderImport(){
       '<div class="row">' + (sample ? '<button class="btn primary" id="x-polish">Turn into strong bullets</button>' : "") + '<button class="btn" id="x-asis">Add as written</button>' + (xBusy ? '<button class="btn ghost" id="x-cancel">Cancel</button>' : "") + "</div></div>";
   }
   if (xMode === "file") {
-    h += '<div class="stack" style="gap:10px"><label class="drop" id="x-drop" for="x-file">Drop an updated resume, performance review or notes here, or <span style="color:var(--accent);text-decoration:underline;cursor:pointer">choose a file</span><br><span class="small">.docx, .pdf, .txt or .md</span></label><input type="file" id="x-file" accept=".docx,.pdf,.txt,.md,text/plain" class="sr">' +
+    h += '<div class="stack" style="gap:10px"><label class="drop" id="x-drop" for="x-file">Drop an updated resume, performance review or notes here, or <span style="color:var(--accent-ink);text-decoration:underline;cursor:pointer">choose a file</span><br><span class="small">.docx, .pdf, .txt or .md</span></label><input type="file" id="x-file" accept=".docx,.pdf,.txt,.md,text/plain" class="sr">' +
       '<label class="f">Or paste text<textarea id="x-paste" rows="5" placeholder="Paste resume sections, a self-review, or a list of wins.">' + esc(xSrcText) + "</textarea></label>" +
       '<div class="row">' + (sample ? '<button class="btn primary" id="x-extract">Find new bullets</button>' : '<button class="btn primary" id="x-split">Split into bullets</button>') + (xBusy ? '<button class="btn ghost" id="x-cancel">Cancel</button>' : "") + '<span class="small muted">' + (sample ? "Claude skips anything already in your bank." : "Each line becomes a bullet you can assign to a role.") + "</span></div></div>";
   }
