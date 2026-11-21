@@ -16,13 +16,14 @@ Job seekers rewrite the same resume dozens of times, and the bullets usually get
 
 ## Features
 
-- **Tailor resume.** Claude matches the job description to your bank and picks the strongest bullet for each role. Swap, reorder or remove bullets in a live one-page preview with a page-fit meter, then export a PDF. A local skill-and-keyword match works without AI.
-- **Bulk resumes.** Tailor resumes (and optionally cover letters) for five or more jobs at once and download them as a zip.
+- **Single resume.** Claude matches the job description to your bank and picks the strongest bullet for each role. Swap, reorder or remove bullets in a live one-page preview with a page-fit meter, then export a PDF. A local skill-and-keyword match works without AI.
+- **Bulk resumes.** Tailor resumes (and optionally cover letters) for five or more jobs at once and download them as a zip. Every job goes through Claude; if Claude is unavailable the button says so, and any job that fell back to quick match is marked.
 - **Cover letters** written in your own voice, learned from letters you upload.
 - **Application answers** for common questions (why this company, why you, field-specific prompts), drafted from your real stories.
 - **Bullet bank.** Every bullet proves one skill. `[Bracketed placeholders]` mark numbers still to collect. "Add new experience" turns rough notes or an updated resume into new bullets, skipping duplicates.
 - **Tracker.** Every resume you make is logged as Applied. Move it through Interview scheduled, Interview done, Case, Offer or Rejected. Days since applied turns green, yellow or red based on how long since the last update.
 - **Guide.** A field-by-field playbook of what strong resumes look like.
+- **Leave feedback.** A form in the header that files into the artifact's database, readable only by whoever shared the app. Each person can write only their own entry and cannot read anyone else's. It is not anonymous, and the form says so.
 
 ![Tailored resume preview](docs/tailor.png)
 
@@ -30,14 +31,14 @@ Job seekers rewrite the same resume dozens of times, and the bullets usually get
 
 Different fields reward different evidence, so each field gets its own guide (`research/field-guides.json`):
 
-| Field | What a strong bullet leads with |
-| --- | --- |
-| Product Management | The product outcome moved (adoption, activation, revenue, churn) and the decision the PM made to move it |
-| Software Engineering | Before-and-after numbers on latency, throughput, reliability, cost or delivery speed, at real scale |
-| Business Operations | A mini case: analysis, recommendation, result in dollars or time saved |
-| Data Analytics | The decision the analysis changed, the data behind it, and the tools used |
+| Field | Written as | What a strong bullet leads with |
+| --- | --- | --- |
+| Product Management | the CPO of Notion | The product outcome moved (adoption, activation, revenue, churn) and the decision the PM made to move it |
+| Software Engineering | a staff engineer at Meta | Before-and-after numbers on latency, throughput, reliability, cost or delivery speed, at real scale |
+| Business Operations | the COO of Meta | A mini case: analysis, recommendation, result in dollars or time saved |
+| Data Analytics | a lead data engineer at Meta | The decision the analysis changed, the data behind it, and the tools used |
 
-Each guide has bullet formulas, 12 skills with the metrics that count for each, weak-to-strong rewrites, seniority signals and common application questions. The guides came from research into published hiring guidance and successful resumes (`research/notes.md`), then a separate resume-expert review pass that corrected outdated metrics and removed weak patterns. The guides drive every prompt in the app.
+Each guide has bullet formulas, 12 skills with the metrics that count for each, weak-to-strong rewrites, seniority signals and common application questions. It also names an expert: every prompt that writes a bullet opens in that person's voice and ends with a review pass in it, checking that the bullet names a result rather than a duty, that the candidate's own decision is visible, that scope reads without a title, that a recruiter outside the field understands it on one read, and that no number was invented. The guides came from research into published hiring guidance and successful resumes (`research/notes.md`), then a separate resume-expert review pass that corrected outdated metrics and removed weak patterns. The guides drive every prompt in the app.
 
 ![Guide tab](docs/guide.png)
 
@@ -45,6 +46,7 @@ Each guide has bullet formulas, 12 skills with the metrics that count for each, 
 
 - **No invented facts.** The AI can only choose bullets that exist in your bank and use numbers exactly as you gave them. A missing number becomes a `[placeholder]`, with a fallback version of the bullet that still reads well without it.
 - **One skill per bullet.** Tagging forces each bullet to prove something specific, and shows where the bank is thin.
+- **One vertical per job.** A posting is scored against each field's own keywords and written by that field alone, so a software engineering resume keeps engineering verbs instead of drifting into product language.
 - **Works without AI.** Quick match, PDF export, the tracker and manual editing all work offline.
 - **Your data stays yours.** Work saves to your own Claude account or your browser, with a JSON backup and restore.
 
