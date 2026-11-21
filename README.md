@@ -25,7 +25,7 @@ Job seekers rewrite the same resume dozens of times, and the bullets usually get
 - **Guide.** A field-by-field playbook of what strong resumes look like.
 - **Leave feedback.** A form in the header that files into the artifact's database, readable only by whoever shared the app. Each person can write only their own entry and cannot read anyone else's. It is not anonymous, and the form says so.
 
-![Tailored resume preview](docs/tailor.png)
+![The Single resume tab](docs/tailor.png)
 
 ## Field-specific resume guides
 

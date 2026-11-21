@@ -4,7 +4,7 @@
 A single-page app (`index.html`, plain HTML/CSS/JS, no build step) that tailors resumes, cover letters and application answers to each job from one bank of accomplishment bullets. It's a public portfolio project. The owner is a product manager who shows it to recruiters.
 
 ## Hard rule: no personal data in this repo
-The repo is public. Never commit a real person's resume content, phone, email, address, employer details or bullets. Screenshots and examples must use made-up profiles (the current ones use "Jamie Rivera"). The owner keeps a personal copy of the app with his own data on claude.ai. That copy never goes in this repo. Commit with the GitHub no-reply email, not a personal one.
+The repo is public. Never commit a real person's resume content, phone, email, address, employer details or bullets. Screenshots and examples must use made-up profiles (the current ones use "Jamie Rivera"). The screenshots are generated, not hand-taken: a seed script builds that fictional profile into a throwaway copy of `index.html` and headless Chrome captures it (`--headless=new --virtual-time-budget=... --window-size=W,H --screenshot=out.png`, 1440x1100 for the full views, card-sized windows for the two overlay shots, and a negative `animation-delay` on `.scene .it` to hold the atrium mid-cycle). Regenerate them the same way rather than screenshotting a real account. The owner keeps a personal copy of the app with his own data on claude.ai. That copy never goes in this repo. Commit with the GitHub no-reply email, not a personal one.
 
 ## How it runs
 - It's built to run as a Claude artifact on claude.ai. The runtime gives `window.claude.use(name)`, which returns capability objects:
