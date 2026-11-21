@@ -610,6 +610,60 @@ let deletedIds = [];
 function mergeDefaults(){ const have = new Set(bank.map(b => b.id)); for (const d of DEFAULT_BULLETS) if (!have.has(d.id) && !deletedIds.includes(d.id)) { const i = bank.map(b => b.role).lastIndexOf(d.role); bank.splice(i + 1, 0, clone(d)); } }
 let questions = [];
 let resumes = [];
+// How this person rewrites a bullet after it was first written. Private to them like
+// the rest of their work, and read back into every prompt that writes a bullet, so what
+// Claude drafts next already sounds like them.
+let editMemory = {edits:[]};
+function normEdits(x){
+  const e = (x && Array.isArray(x.edits)) ? x.edits : [];
+  return {edits:e.filter(r => r && r.before && r.after).slice(0, 60).map(r => ({
+    at:+r.at || 0, id:String(r.id || ""), role:String(r.role || ""),
+    skill:String(r.skill || ""), before:String(r.before), after:String(r.after)}))};
+}
+function recordEdit(before, after, b){
+  try {
+    before = String(before || "").trim(); after = String(after || "").trim();
+    if (!before || !after || before === after) return;
+    // Rebuilt, never mutated: the storage runtime freezes what it is handed.
+    const kept = editMemory.edits.filter(r => !(r.id === b.id && r.before === before));
+    editMemory = {edits:[{at:Date.now(), id:b.id, role:b.role, skill:b.skill || "", before, after}].concat(kept).slice(0, 60)};
+    persist("edits", editMemory);
+  } catch (e) {}
+}
+const EDIT_STOP = new Set("a an and the to of in on for with by from at as is are was were be been it its that this these those their they them you your we our my i me".split(" "));
+function editTendencies(){
+  const es = editMemory.edits; if (!es.length) return null;
+  const words = x => String(x).toLowerCase().match(/[a-z0-9%$.+-]+/g) || [];
+  const hasNum = x => /\d/.test(x);
+  let dLen = 0, numsIn = 0, numsOut = 0; const added = {}, dropped = {}, verbs = {};
+  for (const e of es) {
+    const a = words(e.before), b = words(e.after);
+    dLen += b.length - a.length;
+    if (!hasNum(e.before) && hasNum(e.after)) numsIn++;
+    if (hasNum(e.before) && !hasNum(e.after)) numsOut++;
+    if (a[0] && b[0] && a[0] !== b[0]) verbs[b[0]] = (verbs[b[0]] || 0) + 1;
+    const sa = new Set(a), sb = new Set(b);
+    for (const w of sb) if (!sa.has(w) && !EDIT_STOP.has(w) && w.length > 2) added[w] = (added[w] || 0) + 1;
+    for (const w of sa) if (!sb.has(w) && !EDIT_STOP.has(w) && w.length > 2) dropped[w] = (dropped[w] || 0) + 1;
+  }
+  const top = (o, n) => Object.keys(o).filter(w => o[w] > 1).sort((x, y) => o[y] - o[x]).slice(0, n);
+  return {n:es.length, dLen:Math.round(dLen / es.length), numsIn, numsOut,
+          verbs:top(verbs, 5), added:top(added, 6), dropped:top(dropped, 6)};
+}
+function editStyleText(){
+  const t = editTendencies(); if (!t) return "";
+  const lines = [];
+  if (Math.abs(t.dLen) >= 2) lines.push("- They make a bullet " + (t.dLen < 0 ? "shorter" : "longer") + " by about " + Math.abs(t.dLen) + " words.");
+  if (t.numsIn > 1) lines.push("- They add a number or a [placeholder] where there was none (" + t.numsIn + " times).");
+  if (t.numsOut > 1) lines.push("- They take numbers back out (" + t.numsOut + " times), so do not force one in.");
+  if (t.verbs.length) lines.push("- Opening verbs they move to: " + t.verbs.join(", ") + ".");
+  if (t.added.length) lines.push("- Words they keep putting in: " + t.added.join(", ") + ".");
+  if (t.dropped.length) lines.push("- Words they keep cutting: " + t.dropped.join(", ") + ".");
+  const pairs = editMemory.edits.slice(0, 8).map(e => "  before: " + e.before + "\n  they rewrote it as: " + e.after).join("\n");
+  return "\n\nHow this person rewrites a bullet, from " + t.n + " edit" + (t.n > 1 ? "s" : "") + " they made by hand. This is their voice, not a draft to improve on: match it, and where it meets a rule above, follow them on wording and the rule on substance.\n"
+    + (lines.length ? lines.join("\n") + "\n" : "") + "Their most recent rewrites:\n" + pairs;
+}
+
 // What the postings keep asking for, across jobs. Private to this user like the rest.
 let jdMemory = {jobs:[], terms:{}, proposals:[], dismissed:[]};
 function normMemory(x){
@@ -676,6 +730,7 @@ function loadLocal(){
   try { const q = JSON.parse(localStorage.getItem("as1.answers") || "null"); if (Array.isArray(q) && q.length) questions = q; } catch (e) {}
   try { const r = JSON.parse(localStorage.getItem("as1.resumes") || "null"); if (Array.isArray(r)) resumes = r; } catch (e) {}
   try { const x = JSON.parse(localStorage.getItem("as1.jdmemory") || "null"); if (x) jdMemory = normMemory(x); } catch (e) {}
+  try { const x = JSON.parse(localStorage.getItem("as1.edits") || "null"); if (x) editMemory = normEdits(x); } catch (e) {}
 }
 async function initDb(){
   const C = window.claude;
@@ -688,7 +743,7 @@ async function initDb(){
   col = db.collection("data/users/" + uid);
   const timer = setTimeout(() => setStatus("local", "Can't reach your saved work yet; showing the default bank"), 10000);
   try {
-    const [b, a, r, m, ls, lt, tk, ro, pr, jm] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile","jdmemory"].map(k => col.doc(k).get()));
+    const [b, a, r, m, ls, lt, tk, ro, pr, jm, ed] = await Promise.all(["bank","answers","resumes","bankmeta","letterstyle","letters","tracker","roles","profile","jdmemory","edits"].map(k => col.doc(k).get()));
     // A missing profile doc used to return here, which stranded a user's bank, roles and
     // tracker in their account and showed them an empty app. Load whatever is there.
     if (pr.exists) applyProfileDoc(thaw(pr.data().data));
@@ -703,6 +758,7 @@ async function initDb(){
     if (a.exists && Array.isArray(a.data().data)) questions = thaw(a.data().data);
     if (r.exists && Array.isArray(r.data().data)) resumes = thaw(r.data().data);
     if (jm.exists && jm.data().data) jdMemory = normMemory(jm.data().data);
+    if (ed.exists && ed.data().data) editMemory = normEdits(thaw(ed.data().data));
     if (!pr.exists && (ROLES.length || bank.length)) SETTINGS.onboarded = true;
     setStatus("ok", "Saved to your account");
   } catch (e) {
@@ -848,6 +904,7 @@ Job description:
 Bank (JSON):
 ${JSON.stringify(bankForAI)}
 
+${editStyleText()}
 ${reviewRules(EX)}
 
 Return only JSON: {"company":"","title":"","positioning":"","keywords":[],"covered":[],"gaps":[],"picks":${pickTpl},"why":{"<id>":""},"rewrites":[{"id":"","text":""}]}`;
@@ -1175,6 +1232,7 @@ Hard rules:
 - "covers": the requirement it answers. "role": a role id from the list. "skill": exactly one of: ${skillNames(F).join(" | ")}.
 ${fieldRulesText(F)}
 
+${editStyleText()}
 ${reviewRules(fieldExpert(F))}
 
 Return only JSON: {"bullets":[{"text":"","covers":"","role":"","skill":""}]}`;
@@ -1193,6 +1251,54 @@ Return only JSON: {"bullets":[{"text":"","covers":"","role":"","skill":""}]}`;
   } catch (e) {
     const m = $("m-msg"); if (m) { m.hidden = false; m.className = "note warn"; m.textContent = sampleErrText(e); }
   } finally { memAbort = null; }
+}
+
+/* ---------------- The expert's read on a bullet the user just wrote ---------------- */
+// One short call on the bullet they just saved, by the expert for that bullet's own
+// vertical. It either agrees or offers one rewrite, which is theirs to take or leave.
+let editReview = null;
+function bulletField(b){
+  const fs = FIELDS.length ? FIELDS : FIELD_KEYS;
+  for (const f of fs) if (((FIELD_SPECS[f] || {}).skills || []).some(x => x.name === b.skill)) return f;
+  return fs[0];
+}
+async function reviewEdit(b){
+  if (!sample || !b) { editReview = null; return; }
+  const F = bulletField(b), who = fieldExpert(F), role = ROLES.find(r => r.id === b.role);
+  editReview = {id:b.id, state:"run"}; renderBank();
+  const prompt = `You are ${who}. This person has just written or rewritten one bullet on their resume, by hand. Judge that bullet and nothing else.
+
+Role: ${role ? roleLabel(role) : b.role}
+Skill it should prove: ${b.skill}
+What they wrote: ${JSON.stringify(b.text)}
+${editStyleText()}
+${reviewRules(who)}
+
+If it already meets that standard, say so and leave it alone; "keep" is the right answer more often than not. If one specific thing holds it back, name it in a single sentence and give one rewrite that fixes that and nothing else. Keep their voice, their facts, and every [bracketed placeholder] exactly as they wrote it. Never add a number they did not give you.
+
+Return only JSON: {"verdict":"keep" or "improve","note":"one sentence","text":"the rewrite, or empty when the verdict is keep"}`;
+  try {
+    const r = await askJSON(prompt, null);
+    if (!editReview || editReview.id !== b.id) return;
+    const cur = byId(b.id); if (!cur) { editReview = null; renderBank(); return; }
+    const text = String((r && r.text) || "").trim();
+    // Never let a review quietly drop a [placeholder] the person left on purpose.
+    const improve = r && r.verdict === "improve" && text && text !== cur.text && !(hasGap(cur.text) && !hasGap(text));
+    editReview = {id:b.id, state:"done", verdict:improve ? "improve" : "keep",
+                  note:String((r && r.note) || "").slice(0, 300), text:improve ? text : ""};
+  } catch (e) { editReview = null; }
+  renderBank();
+}
+const upFirst = x => x.charAt(0).toUpperCase() + x.slice(1);
+function reviewHTML(b){
+  if (!editReview || editReview.id !== b.id) return "";
+  const who = esc(fieldExpert(bulletField(b)));
+  if (editReview.state === "run") return '<div class="note"><span class="spin" aria-hidden="true"></span> ' + upFirst(who) + ' is reading this one…</div>';
+  if (editReview.verdict === "keep") return '<div class="note"><b>Read by ' + who + ':</b> ' + esc(editReview.note || "This one is ready as written.") + ' <button class="btn sm ghost" data-act="revno">Dismiss</button></div>';
+  return '<div class="note warn"><b>' + upFirst(who) + ' suggests:</b> ' + esc(editReview.note) +
+    '<div style="margin-top:6px">' + esc(editReview.text) + '</div>' +
+    '<div class="row" style="margin-top:8px"><button class="btn sm primary" data-act="revyes" data-id="' + esc(b.id) + '">Use this wording</button>' +
+    '<button class="btn sm" data-act="revno">Keep mine</button></div></div>';
 }
 
 /* ---------------- Render: bank ---------------- */
@@ -1227,6 +1333,7 @@ function bulletCard(b, list){
   const isAlt = b.alt && bank.filter(x => x.alt === b.alt)[0].id !== b.id;
   return '<div class="bul' + (hasGap(b.text) ? " needs" : "") + (isAlt ? " alt" : "") + '"><div class="id">' + b.id + '</div><div><div class="tx">' + markGaps(b.text) + "</div>" +
     (hasGap(b.text) && b.fallback ? '<div class="fb">Usable now as: ' + esc(b.fallback) + "</div>" : hasGap(b.text) ? '<div class="fb">Fill in the bracket to use this one.</div>' : "") +
+    reviewHTML(b) +
     '<div class="meta"><span class="chip"><span class="sw" style="background:' + (SKILL_COLOR[b.skill] || "#888") + '"></span>' + esc(b.skill) + "</span>" + (b.tags || []).map(t => '<span class="chip">' + esc(t) + "</span>").join("") +
     (altSiblings.length ? '<span class="small muted">Other version' + (altSiblings.length > 1 ? "s" : "") + ": " + altSiblings.join(", ") + "</span>" : "") + "</div></div>" +
     '<div class="acts"><button class="btn sm" data-act="edit" data-id="' + b.id + '">Edit</button><button class="btn sm ghost" data-act="dup" data-id="' + b.id + '">Duplicate</button></div></div>';
@@ -1438,16 +1545,28 @@ $("b-skills").addEventListener("click", e => { const b = e.target.closest("[data
 $("b-list").addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return; const act = b.dataset.act;
   if (act === "editrole") { xMode = "role"; xRoleEdit = b.dataset.role; xProps = []; xNewRoles = []; renderImport(); $("x-card").scrollIntoView({behavior:"smooth", block:"start"}); return; }
-  if (act === "edit") { editing = b.dataset.id; renderBank(); const t = $("e-text"); if (t) t.focus(); }
-  else if (act === "new") { editing = "new:" + b.dataset.role; renderBank(); const t = $("e-text"); if (t) t.focus(); }
+  if (act === "revno") { editReview = null; renderBank(); return; }
+  if (act === "revyes") {
+    const cur = byId(b.dataset.id), wording = editReview && editReview.text;
+    if (cur && wording) { cur.text = wording; persist("bank", bank); renderTailor(); }
+    editReview = null; renderBank(); return;
+  }
+  if (act === "edit") { editReview = null; editing = b.dataset.id; renderBank(); const t = $("e-text"); if (t) t.focus(); }
+  else if (act === "new") { editReview = null; editing = "new:" + b.dataset.role; renderBank(); const t = $("e-text"); if (t) t.focus(); }
   else if (act === "ecancel") { editing = null; renderBank(); }
   else if (act === "dup") { const src = byId(b.dataset.id); const nb = Object.assign(clone(src), {id:nextId(src.role), alt:src.alt || ("g-" + src.id)}); if (!src.alt) src.alt = nb.alt; bank.splice(bank.indexOf(src) + 1, 0, nb); editing = nb.id; persist("bank", bank); renderBank(); }
   else if (act === "esave") {
     const text = $("e-text").value.trim(); if (!text) { $("e-confirm").innerHTML = '<div class="note warn">Write the bullet first.</div>'; return; }
+    const isNew = b.dataset.new === "1";
+    const before = isNew ? "" : ((byId(b.dataset.id) || {}).text || "");
     const data = {text, skill:$("e-skill").value, tags:$("e-tags").value.split(",").map(s => s.trim()).filter(Boolean), fallback:$("e-fb").value.trim() || null};
-    if (b.dataset.new === "1") bank.push(Object.assign({id:b.dataset.id, role:b.dataset.role, alt:null}, data));
+    if (isNew) bank.push(Object.assign({id:b.dataset.id, role:b.dataset.role, alt:null}, data));
     else Object.assign(byId(b.dataset.id), data);
     editing = null; persist("bank", bank); renderBank(); renderTailor();
+    const saved = byId(b.dataset.id);
+    // Their rewrite goes into this profile's own memory, and the expert reads what they wrote.
+    if (saved && before && before !== saved.text) recordEdit(before, saved.text, saved);
+    if (saved && (isNew || before !== saved.text)) reviewEdit(saved);
   }
   else if (act === "edel") {
     if (b.dataset.ok !== "1") { b.dataset.ok = "1"; b.textContent = "Click again to delete"; return; }
@@ -1984,6 +2103,7 @@ const RULES_FN = () => `Bullet rules:
 
 Write the bullet the way strong resumes in this field are written:
 ${fieldRulesText()}
+${editStyleText()}
 ${reviewRules(expertsText())}`;
 let xAbort = null;
 async function xPolish(){
@@ -2453,7 +2573,7 @@ $("pf").addEventListener("click", async e => {
   }
   if (a === "save") { readProfileForm(); PROFILE.sections = PROFILE.sections.map(s => ({label:s.label, text:s.text.trim()})).filter(s => s.text); rebuildSkills(); questions = buildQuestions(questions); persist("answers", questions); persistProfile(); renderAll(); $("pf-msg").textContent = "Saved."; }
   if (a === "export") {
-    const data = {app:"application-studio", version:1, exportedAt:new Date().toISOString(), profile:{profile:PROFILE, fields:FIELDS, settings:SETTINGS, stories:STORIES}, roles:ROLES, bank, answers:questions, resumes, letters, letterstyle:letterStyle, tracker};
+    const data = {app:"application-studio", version:1, exportedAt:new Date().toISOString(), profile:{profile:PROFILE, fields:FIELDS, settings:SETTINGS, stories:STORIES}, roles:ROLES, bank, answers:questions, resumes, letters, letterstyle:letterStyle, tracker, edits:editMemory};
     try { await downloads.save({filename:"Atrium Application Studio backup " + new Date().toISOString().slice(0, 10) + ".json", data:JSON.stringify(data, null, 1)}); } catch (err) { if (err && err.code !== "declined") $("pf-msg").textContent = "The backup couldn't be saved."; }
   }
   if (a === "reset") {
@@ -2469,8 +2589,8 @@ $("pf").addEventListener("change", async e => {
   try {
     const d = JSON.parse(await f.text()); if (d.app !== "application-studio") throw new Error("not");
     const p = d.profile || {}; PROFILE = p.profile || PROFILE; FIELDS = p.fields || []; SETTINGS = p.settings || {defaultPicks:{}, onboarded:true}; STORIES = p.stories || [];
-    ROLES = d.roles || []; bank = d.bank || []; questions = d.answers || []; resumes = d.resumes || []; letters = d.letters || []; tracker = d.tracker || []; letterStyle = d.letterstyle || {samples:[], guide:""};
-    persistProfile(); persist("roles", ROLES); persist("bank", bank); persist("answers", questions); persist("resumes", resumes); persist("letters", letters); persist("tracker", tracker); persist("letterstyle", letterStyle);
+    ROLES = d.roles || []; bank = d.bank || []; questions = d.answers || []; resumes = d.resumes || []; letters = d.letters || []; tracker = d.tracker || []; letterStyle = d.letterstyle || {samples:[], guide:""}; editMemory = normEdits(d.edits);
+    persistProfile(); persist("roles", ROLES); persist("bank", bank); persist("answers", questions); persist("resumes", resumes); persist("letters", letters); persist("tracker", tracker); persist("letterstyle", letterStyle); persist("edits", editMemory);
     rebuildSkills(); work = freshWork(); work.picks = defaultPicks(); saveWorkLocal(); renderAll(); renderProfile(); $("pf-msg").textContent = "Backup restored.";
   } catch (err) { $("pf-msg").textContent = "That file isn't an Atrium Application Studio backup."; }
 });

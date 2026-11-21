@@ -20,6 +20,8 @@ Job seekers rewrite the same resume dozens of times, and the bullets usually get
 - **Bulk resumes.** Tailor resumes (and optionally cover letters) for five or more jobs at once and download them as a zip. Every job goes through Claude; if Claude is unavailable the button says so, and any job that fell back to quick match is marked.
 - **Cover letters** written in your own voice, learned from letters you upload.
 - **Application answers** for common questions (why this company, why you, field-specific prompts), drafted from your real stories.
+- **Your edits teach it.** Every bullet you rewrite by hand is remembered as a before-and-after pair in your own private storage, and the tendencies behind them - shorter or longer, numbers in or out, the verbs you reach for, the words you keep cutting - go into every prompt that writes a bullet, so the next draft already sounds like you.
+- **The expert reads what you write.** Save a bullet by hand and the expert for that bullet's vertical reads it against the same standard, then either agrees or offers one rewrite for you to take or leave.
 - **Bullet bank.** Every bullet proves one skill. `[Bracketed placeholders]` mark numbers still to collect. "Add new experience" turns rough notes or an updated resume into new bullets, skipping duplicates.
 - **Tracker.** Every resume you make is logged as Applied. Move it through Interview scheduled, Interview done, Case, Offer or Rejected. Days since applied turns green, yellow or red based on how long since the last update.
 - **Guide.** A field-by-field playbook of what strong resumes look like.
