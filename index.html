@@ -295,7 +295,8 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
     <a href="#tracker" data-view="tracker">Tracker</a>
     <a href="#guide" data-view="guide">Guide</a>
   </nav>
-  <button class="btn sm" id="open-profile" style="margin-left:auto">Profile &amp; data</button>
+  <button class="btn sm ghost" id="open-fb" style="margin-left:auto" hidden>Feedback</button>
+  <button class="btn sm" id="open-profile">Profile &amp; data</button>
   <div class="status" id="status" style="margin-left:0"><span class="dot" id="sdot"></span><span id="stext">Loading your saved work…</span></div>
 </header>
 
@@ -514,6 +515,13 @@ table.trk select,table.trk input[type=date]{width:auto;padding:5px 8px;font-size
 
 <div class="pop" id="pop" hidden role="dialog" aria-label="Choose a bullet"></div>
 <div class="ov" id="ob" hidden role="dialog" aria-modal="true" aria-label="Set up Atrium Application Studio"><div class="ob-panel" id="ob-panel"></div></div>
+<div class="ov" id="fb" hidden role="dialog" aria-modal="true" aria-label="Send feedback"><div class="pf-panel"><div class="row" style="justify-content:space-between"><h2 style="font-size:18px">Send feedback</h2><button class="btn sm ghost" data-fb="close">Close</button></div>
+<div class="stack" style="gap:12px;margin-top:12px">
+  <div class="small muted">Goes to the person who built this, not to a public page. Your Claude account is attached, so it isn't anonymous.</div>
+  <label class="f">What kind<select id="fb-kind"><option value="bug">Something is broken</option><option value="confusing">Something is confusing</option><option value="idea">An idea</option><option value="bullets">The bullets it wrote</option><option value="other">Something else</option></select></label>
+  <label class="f">Feedback<textarea id="fb-text" rows="6" placeholder="What happened, what you expected, and where you were in the app."></textarea></label>
+  <div class="row"><button class="btn primary" data-fb="send">Send</button><span class="small muted" id="fb-msg"></span></div>
+</div></div></div>
 <div class="ov" id="pf" hidden role="dialog" aria-modal="true" aria-label="Profile and data"><div class="pf-panel"><div class="row" style="justify-content:space-between"><h2 style="font-size:18px">Profile &amp; data</h2><button class="btn sm ghost" data-pf="close">Close</button></div><div id="pf-body" class="stack" style="gap:18px"></div></div></div>
 
 
@@ -702,7 +710,7 @@ async function initDb(){
 }
 
 /* ---------------- Capabilities: Claude + downloads ---------------- */
-let sample = null, downloads = null;
+let sample = null, downloads = null, feedbackDb = null, feedbackUid = null;
 (async () => {
   const C = window.claude; if (!C || !C.use) return;
   try { sample = await C.use("sample"); } catch (e) {}
@@ -710,6 +718,12 @@ let sample = null, downloads = null;
   $("t-ai").hidden = !sample; $("a-ai").hidden = !sample;
   $("t-pdf").hidden = !downloads;
   try { renderLetter(); renderBulk(); renderImport(); if (!$("ob").hidden) renderOb(); } catch (e) {}
+  // Feedback rides on the same db capability; it needs a signed-in viewer and an id to file under.
+  try {
+    const [fdb, fuser] = await Promise.all([C.use("db"), C.use("user")]);
+    if (fdb && fuser) { feedbackUid = await fuser.id(); feedbackDb = feedbackUid ? fdb : null; }
+  } catch (e) {}
+  $("open-fb").hidden = !feedbackDb;
   if (!sample) showMsg("t-msg", "Claude matching isn't available in this view. Quick match still picks bullets by skill and keyword.", false);
 })();
 async function askJSON(prompt, signal, retried){
@@ -2349,6 +2363,37 @@ ${ob.samples.slice(0, 4).map((x, i) => "--- Sample " + (i + 1) + " ---\n" + x.te
 /* ---------------- Profile, data and guide ---------------- */
 function persistProfile(){ persist("profile", {profile:PROFILE, fields:FIELDS, settings:SETTINGS, stories:STORIES}); renderBrand(); }
 function renderBrand(){ $("brand-sub").textContent = (PROFILE.name ? PROFILE.name + " · " : "") + (FIELDS.length ? fieldLabels() : "resumes and answers from one bank"); }
+/* ---------------- Feedback ---------------- */
+function openFeedback(){ $("fb").hidden = false; document.body.style.overflow = "hidden"; $("fb-msg").textContent = ""; const t = $("fb-text"); if (t) t.focus(); }
+function closeFeedback(){ $("fb").hidden = true; document.body.style.overflow = ""; }
+async function sendFeedback(btn){
+  const text = ($("fb-text").value || "").trim();
+  if (!text) { $("fb-msg").textContent = "Write something first."; $("fb-text").focus(); return; }
+  if (!feedbackDb || !feedbackUid) { $("fb-msg").textContent = "Feedback needs you signed in to Claude."; return; }
+  btn.disabled = true; $("fb-msg").textContent = "Sending\u2026";
+  const entry = {at:Date.now(), kind:$("fb-kind").value, text:text.slice(0, 4000), view:(location.hash || "#tailor").slice(1), fields:FIELDS.slice()};
+  try {
+    const ref = feedbackDb.doc("feedback/" + feedbackUid);
+    let prev = [];
+    try { const got = await ref.get(); if (got && got.exists) { const d = got.data() || {}; if (Array.isArray(d.entries)) prev = thaw(d.entries); } } catch (e) {}
+    await ref.set({entries:prev.concat([entry]).slice(-50), lastAt:entry.at});
+    $("fb-text").value = ""; $("fb-msg").textContent = "Sent. Thank you.";
+    setTimeout(() => { if (!$("fb").hidden) closeFeedback(); }, 1200);
+  } catch (e) {
+    try { console.error("Application Studio: feedback write failed.", e); } catch (x) {}
+    $("fb-msg").textContent = (e && (e.code === "not_granted" || e.code === "permission_denied"))
+      ? "This copy doesn't let you send feedback. Tell whoever shared it with you instead."
+      : "Couldn't send: " + String((e && (e.message || e.code)) || "unknown error");
+  } finally { btn.disabled = false; }
+}
+$("fb").addEventListener("click", e => {
+  if (e.target.id === "fb") { closeFeedback(); return; }
+  const b = e.target.closest("[data-fb]"); if (!b) return;
+  if (b.dataset.fb === "close") closeFeedback();
+  if (b.dataset.fb === "send") sendFeedback(b);
+});
+$("open-fb").addEventListener("click", openFeedback);
+
 function openProfile(){ $("pf").hidden = false; document.body.style.overflow = "hidden"; renderProfile(); }
 function closeProfile(){ $("pf").hidden = true; document.body.style.overflow = ""; }
 function renderProfile(){
