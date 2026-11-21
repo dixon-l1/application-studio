@@ -5,7 +5,7 @@ Notable changes to Atrium Application Studio. Newest first.
 ## Unreleased
 
 ### Added
-- **A Feedback button in the header.** Opens a short form — what kind, what happened — and files it in the artifact's database under `feedback/<viewer id>`, with the view they were on and the fields they have enabled. Access rules make it a suggestion box: each person writes only their own entry and cannot read anyone else's, while the owner can read them all. It is not anonymous, and the form says so. The button only appears for a signed-in viewer whose copy allows writes; a refused write says what to do instead. ([#18](https://github.com/dixon-l1/application-studio/pull/18))
+- **A Leave feedback button in the header.** Opens a short form — what kind, what happened — and files it in the artifact's database under `feedback/<viewer id>`, with the view they were on and the fields they have enabled. Access rules make it a suggestion box: each person writes only their own entry and cannot read anyone else's, while the owner can read them all. It is not anonymous, and the form says so. The button only appears for a signed-in viewer whose copy allows writes; a refused write says what to do instead. ([#18](https://github.com/dixon-l1/application-studio/pull/18))
 
 ### Changed
 - **Renamed to Atrium Application Studio**, from the Atria name used earlier the same day. Title, header, onboarding, backup filename, restore error and docs. The backup file's internal key is still `application-studio`, so every backup ever exported still restores. ([#10](https://github.com/dixon-l1/application-studio/pull/10))
